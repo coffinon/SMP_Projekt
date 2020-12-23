@@ -36,7 +36,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define PAYLOAD_SIZE 				1
+#define PAYLOAD_SIZE 				2
+#define ACK_PAYLOAD_SIZE			2
 #define MAX_PAYLOAD_SIZE 			32
 /* USER CODE END PD */
 
@@ -50,6 +51,7 @@
 /* USER CODE BEGIN PV */
 const uint64_t rx_pipe_addr = 		0x11223344AA;
 uint8_t my_rx_data[MAX_PAYLOAD_SIZE + 2];
+uint8_t ack_payload[MAX_PAYLOAD_SIZE] = "OK";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,6 +105,9 @@ int main(void)
   NRF24_setChannel(52);
   NRF24_setPayloadSize(PAYLOAD_SIZE);
   NRF24_openReadingPipe(1, rx_pipe_addr);
+
+  NRF24_enableDynamicPayloads();
+  NRF24_enableAckPayload();
   NRF24_startListening();
 
   uint8_t size;
@@ -114,6 +119,8 @@ int main(void)
   {
 	  if(NRF24_available()){
 		  NRF24_read(my_rx_data, PAYLOAD_SIZE);
+
+		  NRF24_writeAckPayload(1, ack_payload, ACK_PAYLOAD_SIZE);
 
 		  my_rx_data[PAYLOAD_SIZE] = '\r';
 		  my_rx_data[PAYLOAD_SIZE + 1] = '\n';
