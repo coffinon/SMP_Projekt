@@ -36,6 +36,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define PAYLOAD_SIZE 				1
+#define MAX_PAYLOAD_SIZE 			32
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,9 +48,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-const uint64_t tx_pipe_addr = 0x11223344AA;
-const uint8_t my_tx_data[32] = "Dupa";
-uint8_t uart_buffer[];
+const uint64_t tx_pipe_addr = 		0x11223344AA;
+uint8_t my_tx_data[MAX_PAYLOAD_SIZE + 2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,20 +101,22 @@ int main(void)
 
   NRF24_stopListening();
   NRF24_openWritingPipe(tx_pipe_addr);
-  NRF24_setAutoAck(false);
+  NRF24_setAutoAck(true);
   NRF24_setChannel(52);
-  NRF24_setPayloadSize(32);
+  NRF24_setPayloadSize(PAYLOAD_SIZE);
 
-  uint8_t size;
+  uint8_t i = 30;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  if(NRF24_write(my_tx_data, 32)){
-		  size = sprintf(uart_buffer, "Przeslano : %s\r\n", my_tx_data);
-		  HAL_UART_Transmit(&huart2, uart_buffer, size, 100);
+	  my_tx_data[0] = i++;
+	  if(NRF24_write(my_tx_data, PAYLOAD_SIZE)){
+		  my_tx_data[PAYLOAD_SIZE] = '\r';
+		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';
+		  HAL_UART_Transmit(&huart2, my_tx_data, PAYLOAD_SIZE + 2, 100);
 	  }
 
 	  HAL_Delay(1000);

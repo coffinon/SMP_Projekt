@@ -7,43 +7,43 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .text         000049ec  080001d0  080001d0  000101d0  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       000005c4  08004bbc  08004bbc  00014bbc  2**2
+  2 .rodata       00000590  08004bbc  08004bbc  00014bbc  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM.extab    00000000  08005180  08005180  00020070  2**0
+  3 .ARM.extab    00000000  0800514c  0800514c  00020070  2**0
                   CONTENTS
-  4 .ARM          00000008  08005180  08005180  00015180  2**2
+  4 .ARM          00000008  0800514c  0800514c  0001514c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  5 .preinit_array 00000000  08005188  08005188  00020070  2**0
+  5 .preinit_array 00000000  08005154  08005154  00020070  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .init_array   00000004  08005188  08005188  00015188  2**2
+  6 .init_array   00000004  08005154  08005154  00015154  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  7 .fini_array   00000004  0800518c  0800518c  0001518c  2**2
+  7 .fini_array   00000004  08005158  08005158  00015158  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  8 .data         00000070  20000000  08005190  00020000  2**2
+  8 .data         00000070  20000000  0800515c  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          00000174  20000070  08005200  00020070  2**2
+  9 .bss          00000194  20000070  080051cc  00020070  2**2
                   ALLOC
- 10 ._user_heap_stack 00000604  200001e4  08005200  000201e4  2**0
+ 10 ._user_heap_stack 00000604  20000204  080051cc  00020204  2**0
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00020070  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000bc24  00000000  00000000  000200a0  2**0
+ 12 .debug_info   0000bbdf  00000000  00000000  000200a0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_abbrev 00001dad  00000000  00000000  0002bcc4  2**0
+ 13 .debug_abbrev 00001d9f  00000000  00000000  0002bc7f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_aranges 00000a70  00000000  00000000  0002da78  2**3
+ 14 .debug_aranges 00000a70  00000000  00000000  0002da20  2**3
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00000968  00000000  00000000  0002e4e8  2**3
+ 15 .debug_ranges 00000968  00000000  00000000  0002e490  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_macro  00021ab3  00000000  00000000  0002ee50  2**0
+ 16 .debug_macro  00021abf  00000000  00000000  0002edf8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_line   00009348  00000000  00000000  00050903  2**0
+ 17 .debug_line   0000933c  00000000  00000000  000508b7  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .debug_str    000ca43d  00000000  00000000  00059c4b  2**0
+ 18 .debug_str    000ca527  00000000  00000000  00059bf3  2**0
                   CONTENTS, READONLY, DEBUGGING
- 19 .comment      0000007b  00000000  00000000  00124088  2**0
+ 19 .comment      0000007b  00000000  00000000  0012411a  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002c78  00000000  00000000  00124104  2**2
+ 20 .debug_frame  00002c78  00000000  00000000  00124198  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -1835,7 +1835,7 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
  8000dc2:	bf00      	nop
  8000dc4:	40023c00 	.word	0x40023c00
  8000dc8:	40023800 	.word	0x40023800
- 8000dcc:	08005134 	.word	0x08005134
+ 8000dcc:	08005100 	.word	0x08005100
  8000dd0:	20000008 	.word	0x20000008
  8000dd4:	20000000 	.word	0x20000000
 
@@ -1883,7 +1883,7 @@ uint32_t HAL_RCC_GetPCLK1Freq(void)
  8000e0c:	4618      	mov	r0, r3
  8000e0e:	bd80      	pop	{r7, pc}
  8000e10:	40023800 	.word	0x40023800
- 8000e14:	08005144 	.word	0x08005144
+ 8000e14:	08005110 	.word	0x08005110
 
 08000e18 <HAL_RCC_GetPCLK2Freq>:
   * @note   Each time PCLK2 changes, this function must be called to update the
@@ -1909,7 +1909,7 @@ uint32_t HAL_RCC_GetPCLK2Freq(void)
  8000e34:	4618      	mov	r0, r3
  8000e36:	bd80      	pop	{r7, pc}
  8000e38:	40023800 	.word	0x40023800
- 8000e3c:	08005144 	.word	0x08005144
+ 8000e3c:	08005110 	.word	0x08005110
 
 08000e40 <HAL_RCC_GetSysClockFreq>:
   *
@@ -8938,7 +8938,7 @@ int main(void)
  8003dbe:	f000 fa1b 	bl	80041f8 <MX_USART2_UART_Init>
   /* USER CODE BEGIN 2 */
   NRF24_begin(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, hspi2);
- 8003dc2:	4c29      	ldr	r4, [pc, #164]	; (8003e68 <main+0xc0>)
+ 8003dc2:	4c2b      	ldr	r4, [pc, #172]	; (8003e70 <main+0xc8>)
  8003dc4:	4668      	mov	r0, sp
  8003dc6:	1d23      	adds	r3, r4, #4
  8003dc8:	2254      	movs	r2, #84	; 0x54
@@ -8947,10 +8947,10 @@ int main(void)
  8003dd0:	6823      	ldr	r3, [r4, #0]
  8003dd2:	f44f 7200 	mov.w	r2, #512	; 0x200
  8003dd6:	f44f 7180 	mov.w	r1, #256	; 0x100
- 8003dda:	4824      	ldr	r0, [pc, #144]	; (8003e6c <main+0xc4>)
+ 8003dda:	4826      	ldr	r0, [pc, #152]	; (8003e74 <main+0xcc>)
  8003ddc:	f7fe ff64 	bl	8002ca8 <NRF24_begin>
   nrf24_DebugUART_Init(huart2);
- 8003de0:	4e23      	ldr	r6, [pc, #140]	; (8003e70 <main+0xc8>)
+ 8003de0:	4e25      	ldr	r6, [pc, #148]	; (8003e78 <main+0xd0>)
  8003de2:	466d      	mov	r5, sp
  8003de4:	f106 0410 	add.w	r4, r6, #16
  8003de8:	cc0f      	ldmia	r4!, {r0, r1, r2, r3}
@@ -8968,61 +8968,69 @@ int main(void)
   NRF24_stopListening();
  8003e04:	f7ff f830 	bl	8002e68 <NRF24_stopListening>
   NRF24_openWritingPipe(tx_pipe_addr);
- 8003e08:	a415      	add	r4, pc, #84	; (adr r4, 8003e60 <main+0xb8>)
+ 8003e08:	a417      	add	r4, pc, #92	; (adr r4, 8003e68 <main+0xc0>)
  8003e0a:	e9d4 3400 	ldrd	r3, r4, [r4]
  8003e0e:	4618      	mov	r0, r3
  8003e10:	4621      	mov	r1, r4
  8003e12:	f7ff f889 	bl	8002f28 <NRF24_openWritingPipe>
-  NRF24_setAutoAck(false);
- 8003e16:	2000      	movs	r0, #0
+  NRF24_setAutoAck(true);
+ 8003e16:	2001      	movs	r0, #1
  8003e18:	f7ff f912 	bl	8003040 <NRF24_setAutoAck>
   NRF24_setChannel(52);
  8003e1c:	2034      	movs	r0, #52	; 0x34
  8003e1e:	f7ff f8c2 	bl	8002fa6 <NRF24_setChannel>
-  NRF24_setPayloadSize(32);
- 8003e22:	2020      	movs	r0, #32
+  NRF24_setPayloadSize(PAYLOAD_SIZE);
+ 8003e22:	2001      	movs	r0, #1
  8003e24:	f7ff f8d4 	bl	8002fd0 <NRF24_setPayloadSize>
+
+  uint8_t i = 30;
+ 8003e28:	231e      	movs	r3, #30
+ 8003e2a:	71fb      	strb	r3, [r7, #7]
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  if(NRF24_write(my_tx_data, 32)){
- 8003e28:	2120      	movs	r1, #32
- 8003e2a:	4812      	ldr	r0, [pc, #72]	; (8003e74 <main+0xcc>)
- 8003e2c:	f7ff f828 	bl	8002e80 <NRF24_write>
- 8003e30:	4603      	mov	r3, r0
- 8003e32:	2b00      	cmp	r3, #0
- 8003e34:	d00d      	beq.n	8003e52 <main+0xaa>
-		  size = sprintf(uart_buffer, "Przeslano : %s\r\n", my_tx_data);
- 8003e36:	4a0f      	ldr	r2, [pc, #60]	; (8003e74 <main+0xcc>)
- 8003e38:	490f      	ldr	r1, [pc, #60]	; (8003e78 <main+0xd0>)
- 8003e3a:	4810      	ldr	r0, [pc, #64]	; (8003e7c <main+0xd4>)
- 8003e3c:	f000 fab6 	bl	80043ac <siprintf>
- 8003e40:	4603      	mov	r3, r0
- 8003e42:	71fb      	strb	r3, [r7, #7]
-		  HAL_UART_Transmit(&huart2, uart_buffer, size, 100);
- 8003e44:	79fb      	ldrb	r3, [r7, #7]
- 8003e46:	b29a      	uxth	r2, r3
- 8003e48:	2364      	movs	r3, #100	; 0x64
- 8003e4a:	490c      	ldr	r1, [pc, #48]	; (8003e7c <main+0xd4>)
- 8003e4c:	4808      	ldr	r0, [pc, #32]	; (8003e70 <main+0xc8>)
- 8003e4e:	f7fe f992 	bl	8002176 <HAL_UART_Transmit>
+	  my_tx_data[0] = i++;
+ 8003e2c:	79fb      	ldrb	r3, [r7, #7]
+ 8003e2e:	1c5a      	adds	r2, r3, #1
+ 8003e30:	71fa      	strb	r2, [r7, #7]
+ 8003e32:	4a12      	ldr	r2, [pc, #72]	; (8003e7c <main+0xd4>)
+ 8003e34:	7013      	strb	r3, [r2, #0]
+	  if(NRF24_write(my_tx_data, PAYLOAD_SIZE)){
+ 8003e36:	2101      	movs	r1, #1
+ 8003e38:	4810      	ldr	r0, [pc, #64]	; (8003e7c <main+0xd4>)
+ 8003e3a:	f7ff f821 	bl	8002e80 <NRF24_write>
+ 8003e3e:	4603      	mov	r3, r0
+ 8003e40:	2b00      	cmp	r3, #0
+ 8003e42:	d00b      	beq.n	8003e5c <main+0xb4>
+		  my_tx_data[PAYLOAD_SIZE] = '\r';
+ 8003e44:	4b0d      	ldr	r3, [pc, #52]	; (8003e7c <main+0xd4>)
+ 8003e46:	220d      	movs	r2, #13
+ 8003e48:	705a      	strb	r2, [r3, #1]
+		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';
+ 8003e4a:	4b0c      	ldr	r3, [pc, #48]	; (8003e7c <main+0xd4>)
+ 8003e4c:	220a      	movs	r2, #10
+ 8003e4e:	709a      	strb	r2, [r3, #2]
+		  HAL_UART_Transmit(&huart2, my_tx_data, PAYLOAD_SIZE + 2, 100);
+ 8003e50:	2364      	movs	r3, #100	; 0x64
+ 8003e52:	2203      	movs	r2, #3
+ 8003e54:	4909      	ldr	r1, [pc, #36]	; (8003e7c <main+0xd4>)
+ 8003e56:	4808      	ldr	r0, [pc, #32]	; (8003e78 <main+0xd0>)
+ 8003e58:	f7fe f98d 	bl	8002176 <HAL_UART_Transmit>
 	  }
 
 	  HAL_Delay(1000);
- 8003e52:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
- 8003e56:	f7fc fc25 	bl	80006a4 <HAL_Delay>
-	  if(NRF24_write(my_tx_data, 32)){
- 8003e5a:	e7e5      	b.n	8003e28 <main+0x80>
- 8003e5c:	f3af 8000 	nop.w
- 8003e60:	223344aa 	.word	0x223344aa
- 8003e64:	00000011 	.word	0x00000011
- 8003e68:	20000148 	.word	0x20000148
- 8003e6c:	40020800 	.word	0x40020800
- 8003e70:	200001a0 	.word	0x200001a0
- 8003e74:	08005114 	.word	0x08005114
- 8003e78:	08005100 	.word	0x08005100
+ 8003e5c:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
+ 8003e60:	f7fc fc20 	bl	80006a4 <HAL_Delay>
+	  my_tx_data[0] = i++;
+ 8003e64:	e7e2      	b.n	8003e2c <main+0x84>
+ 8003e66:	bf00      	nop
+ 8003e68:	223344aa 	.word	0x223344aa
+ 8003e6c:	00000011 	.word	0x00000011
+ 8003e70:	20000168 	.word	0x20000168
+ 8003e74:	40020800 	.word	0x40020800
+ 8003e78:	200001c0 	.word	0x200001c0
  8003e7c:	20000144 	.word	0x20000144
 
 08003e80 <SystemClock_Config>:
@@ -9254,7 +9262,7 @@ void MX_SPI2_Init(void)
 }
  8003fcc:	bf00      	nop
  8003fce:	bd80      	pop	{r7, pc}
- 8003fd0:	20000148 	.word	0x20000148
+ 8003fd0:	20000168 	.word	0x20000168
  8003fd4:	40003800 	.word	0x40003800
 
 08003fd8 <HAL_SPI_MspInit>:
@@ -9688,7 +9696,7 @@ caddr_t _sbrk(int incr)
  80041c0:	46bd      	mov	sp, r7
  80041c2:	bd80      	pop	{r7, pc}
  80041c4:	20000134 	.word	0x20000134
- 80041c8:	200001e8 	.word	0x200001e8
+ 80041c8:	20000208 	.word	0x20000208
 
 080041cc <SystemInit>:
   *         configuration.
@@ -9782,7 +9790,7 @@ void MX_USART2_UART_Init(void)
  800423e:	bf00      	nop
  8004240:	bd80      	pop	{r7, pc}
  8004242:	bf00      	nop
- 8004244:	200001a0 	.word	0x200001a0
+ 8004244:	200001c0 	.word	0x200001c0
  8004248:	40004400 	.word	0x40004400
 
 0800424c <HAL_UART_MspInit>:
@@ -9956,7 +9964,7 @@ LoopFillZerobss:
   ldr   sp, =_estack      /* set stack pointer */
  8004314:	20020000 	.word	0x20020000
   ldr  r3, =_sidata
- 8004318:	08005190 	.word	0x08005190
+ 8004318:	0800515c 	.word	0x0800515c
   ldr  r0, =_sdata
  800431c:	20000000 	.word	0x20000000
   ldr  r3, =_edata
@@ -9964,7 +9972,7 @@ LoopFillZerobss:
   ldr  r2, =_sbss
  8004324:	20000070 	.word	0x20000070
   ldr  r3, = _ebss
- 8004328:	200001e4 	.word	0x200001e4
+ 8004328:	20000204 	.word	0x20000204
 
 0800432c <ADC_IRQHandler>:
  * @retval None       
@@ -10009,10 +10017,10 @@ Infinite_Loop:
  800436e:	4798      	blx	r3
  8004370:	3501      	adds	r5, #1
  8004372:	e7f2      	b.n	800435a <__libc_init_array+0x1e>
- 8004374:	08005188 	.word	0x08005188
- 8004378:	08005188 	.word	0x08005188
- 800437c:	08005188 	.word	0x08005188
- 8004380:	0800518c 	.word	0x0800518c
+ 8004374:	08005154 	.word	0x08005154
+ 8004378:	08005154 	.word	0x08005154
+ 800437c:	08005154 	.word	0x08005154
+ 8004380:	08005158 	.word	0x08005158
 
 08004384 <memcpy>:
  8004384:	b510      	push	{r4, lr}
@@ -10342,9 +10350,9 @@ Infinite_Loop:
  8004674:	f000 f882 	bl	800477c <_printf_i>
  8004678:	e7ea      	b.n	8004650 <_svfiprintf_r+0x1b0>
  800467a:	bf00      	nop
- 800467c:	0800514c 	.word	0x0800514c
- 8004680:	08005152 	.word	0x08005152
- 8004684:	08005156 	.word	0x08005156
+ 800467c:	08005118 	.word	0x08005118
+ 8004680:	0800511e 	.word	0x0800511e
+ 8004684:	08005122 	.word	0x08005122
  8004688:	00000000 	.word	0x00000000
  800468c:	080043ed 	.word	0x080043ed
 
@@ -10680,8 +10688,8 @@ Infinite_Loop:
  800498e:	f884 3042 	strb.w	r3, [r4, #66]	; 0x42
  8004992:	f104 0542 	add.w	r5, r4, #66	; 0x42
  8004996:	e76c      	b.n	8004872 <_printf_i+0xf6>
- 8004998:	0800515d 	.word	0x0800515d
- 800499c:	0800516e 	.word	0x0800516e
+ 8004998:	08005129 	.word	0x08005129
+ 800499c:	0800513a 	.word	0x0800513a
 
 080049a0 <memmove>:
  80049a0:	4288      	cmp	r0, r1
@@ -10908,7 +10916,7 @@ Infinite_Loop:
  8004b86:	b103      	cbz	r3, 8004b8a <_sbrk_r+0x1a>
  8004b88:	602b      	str	r3, [r5, #0]
  8004b8a:	bd38      	pop	{r3, r4, r5, pc}
- 8004b8c:	200001e0 	.word	0x200001e0
+ 8004b8c:	20000200 	.word	0x20000200
 
 08004b90 <__malloc_lock>:
  8004b90:	4770      	bx	lr

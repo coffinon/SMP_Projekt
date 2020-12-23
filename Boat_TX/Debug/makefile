@@ -46,8 +46,8 @@ Boat_TX.bin \
 all: Boat_TX.elf secondary-outputs
 
 # Tool invocations
-Boat_TX.elf: $(OBJS) $(USER_OBJS) C:\Users\skorp\Desktop\projects\HAL_embedded_C_tutorial\Boat_TX\STM32F446RETX_FLASH.ld
-	arm-none-eabi-gcc -o "Boat_TX.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\skorp\Desktop\projects\HAL_embedded_C_tutorial\Boat_TX\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Boat_TX.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Boat_TX.elf: $(OBJS) $(USER_OBJS) C:\Users\skorp\Desktop\projects\SMP_Projekt\Boat_TX\STM32F446RETX_FLASH.ld
+	arm-none-eabi-gcc -o "Boat_TX.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\skorp\Desktop\projects\SMP_Projekt\Boat_TX\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Boat_TX.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

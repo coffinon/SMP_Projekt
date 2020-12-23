@@ -36,6 +36,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define PAYLOAD_SIZE 				1
+#define MAX_PAYLOAD_SIZE 			32
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,8 +48,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-const uint64_t rx_pipe_addr = 0x11223344AA;
-uint8_t my_rx_data[50];
+const uint64_t rx_pipe_addr = 		0x11223344AA;
+uint8_t my_rx_data[MAX_PAYLOAD_SIZE + 2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,9 +99,9 @@ int main(void)
 
   printRadioSettings();
 
-  NRF24_setAutoAck(false);
+  NRF24_setAutoAck(true);
   NRF24_setChannel(52);
-  NRF24_setPayloadSize(32);
+  NRF24_setPayloadSize(PAYLOAD_SIZE);
   NRF24_openReadingPipe(1, rx_pipe_addr);
   NRF24_startListening();
 
@@ -111,11 +113,11 @@ int main(void)
   while (1)
   {
 	  if(NRF24_available()){
-		  NRF24_read(my_rx_data, 32);
+		  NRF24_read(my_rx_data, PAYLOAD_SIZE);
 
-		  my_rx_data[32] = '\r';
-		  my_rx_data[33] = '\n';
-		  HAL_UART_Transmit(&huart2, my_rx_data, 34, 100);
+		  my_rx_data[PAYLOAD_SIZE] = '\r';
+		  my_rx_data[PAYLOAD_SIZE + 1] = '\n';
+		  HAL_UART_Transmit(&huart2, my_rx_data, PAYLOAD_SIZE + 2, 100);
 	  }
     /* USER CODE END WHILE */
 
