@@ -7,6 +7,19 @@ Date written:			23.12.2020
 
 #define _BV(x) (1<<(x))
 
+/* General */
+#define LOW					0x00
+#define HIGH				0x01
+
+#define FALSE 				0x00
+#define TRUE 				0x01
+
+/* Settings */
+
+#define PAYLOAD_SIZE 		0x02
+#define ACK_PAYLOAD_SIZE	0x02
+#define MAX_PAYLOAD_SIZE 	0x20
+
 /* Memory Map */
 #define REG_CONFIG      	0x00
 #define REG_EN_AA       	0x01

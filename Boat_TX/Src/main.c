@@ -20,13 +20,15 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
+#include "dma.h"
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "MY_NRF24.h"
+#include "KK_NRF24.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -36,9 +38,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define PAYLOAD_SIZE 				2
-#define ACK_PAYLOAD_SIZE			2
-#define MAX_PAYLOAD_SIZE 			32
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,7 +50,7 @@
 /* USER CODE BEGIN PV */
 const uint64_t tx_pipe_addr = 		0x11223344AA;
 uint8_t my_tx_data[MAX_PAYLOAD_SIZE + 2];
-uint8_t ack_payload[MAX_PAYLOAD_SIZE + 2];
+uint16_t Joystick[2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,9 +92,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SPI2_Init();
   MX_USART2_UART_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
+  HAL_ADC_Start_DMA(&hadc1, Joystick, 2);
   NRF24_begin(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, hspi2);
   nrf24_DebugUART_Init(huart2);
 
@@ -103,12 +105,9 @@ int main(void)
 
   NRF24_stopListening();
   NRF24_openWritingPipe(tx_pipe_addr);
-  NRF24_setAutoAck(true);
+  NRF24_setAutoAck(TRUE);
   NRF24_setChannel(52);
   NRF24_setPayloadSize(PAYLOAD_SIZE);
-
-  NRF24_enableDynamicPayloads();
-  NRF24_enableAckPayload();
 
   uint8_t i = 30;
   /* USER CODE END 2 */
@@ -117,18 +116,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  my_tx_data[0] = i++;
-	  my_tx_data[1] = i;
+	  my_tx_data[0] = i++;  //(uint8_t)((float)Joystick[0] * (100.0 / 4095.0));
+	  my_tx_data[1] = i;  //(uint8_t)((float)Joystick[1] * (100.0 / 4095.0));
 	  if(NRF24_write(my_tx_data, PAYLOAD_SIZE)){
-		  NRF24_read(ack_payload, ACK_PAYLOAD_SIZE);
-
 		  my_tx_data[PAYLOAD_SIZE] = '\r';
 		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';
 		  HAL_UART_Transmit(&huart2, my_tx_data, PAYLOAD_SIZE + 2, 100);
-
-		  ack_payload[PAYLOAD_SIZE] = '\r';
-		  ack_payload[PAYLOAD_SIZE + 1] = '\n';
-		  HAL_UART_Transmit(&huart2, ack_payload, ACK_PAYLOAD_SIZE + 2, 100);
 	  }
 
 	  HAL_Delay(1000);

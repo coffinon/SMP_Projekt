@@ -1,4 +1,4 @@
-Src/MY_NRF24.o: ../Src/MY_NRF24.c ../Inc/MY_NRF24.h \
+Src/KK_NRF24.o: ../Src/KK_NRF24.c ../Inc/KK_NRF24.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -28,7 +28,7 @@ Src/MY_NRF24.o: ../Src/MY_NRF24.c ../Inc/MY_NRF24.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Inc/nRF24L01.h
 
-../Inc/MY_NRF24.h:
+../Inc/KK_NRF24.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 
