@@ -6502,11 +6502,11 @@ void NRF24_begin(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pi
  8002c36:	2000      	movs	r0, #0
  8002c38:	f7ff ff8e 	bl	8002b58 <NRF24_write_register>
 	NRF24_write_register(REG_EN_AA, 		REG_EN_AA_AUTO_ACK_ALL_PIPES);
- 8002c3c:	212f      	movs	r1, #47	; 0x2f
+ 8002c3c:	213f      	movs	r1, #63	; 0x3f
  8002c3e:	2001      	movs	r0, #1
  8002c40:	f7ff ff8a 	bl	8002b58 <NRF24_write_register>
 	NRF24_write_register(REG_EN_RXADDR, 	REG_EN_RXADDR_PIPES_1_2_ENABLE);
- 8002c44:	2102      	movs	r1, #2
+ 8002c44:	2103      	movs	r1, #3
  8002c46:	2002      	movs	r0, #2
  8002c48:	f7ff ff86 	bl	8002b58 <NRF24_write_register>
 	NRF24_write_register(REG_SETUP_AW, 		REG_SETUP_AW_5BYTES_ADDR_FIELD);
