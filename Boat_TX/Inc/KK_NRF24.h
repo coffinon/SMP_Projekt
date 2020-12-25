@@ -60,15 +60,10 @@ void NRF24_stopListening(void);
 
 /* PIPE OPERATIONS */
 uint8_t NRF24_available(void);
-uint8_t NRF24_availablePipe(uint8_t* pipe_num);
 uint8_t NRF24_write( const void* buf, uint8_t len );
 uint8_t NRF24_read( void* buf, uint8_t len );
-void NRF24_write_payload(const void* buf, uint8_t len);
-void NRF24_read_payload(void* buf, uint8_t len);
 uint8_t NRF24_getPayloadSize(void);
-uint8_t NRF24_getDynamicPayloadSize(void);
 void NRF24_startWrite( const void* buf, uint8_t len );
-void NRF24_checkInterruptFlags(uint8_t *tx_ok, uint8_t *tx_fail, uint8_t *rx_ready);
 
 
 /* DEFAULT INITIALIZATION */

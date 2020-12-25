@@ -50,7 +50,16 @@ Date written:			23.12.2020
 
 /* MEMORY MAP SETTINGS */
 #define REG_CONFIG_2BYTES_CRC					0x0C
+#define REG_CONFIG_RESET_STATUS					0x70
+#define REG_CONFIG_POWER_DOWN					0x02
+#define REG_CONFIG_POWER_UP						0x02
+#define REG_CONFIG_PRIM_RX						0x01
+#define REG_CONFIG_POWER_UP_RX					0x03
+#define REG_CONFIG_GET_RX_DX					0x40
+#define REG_CONFIG_GET_TX_DS					0x20
+#define REG_CONFIG_GET_TX_DS_MAX_RT				0x30
 #define REG_EN_AA_AUTO_ACK_ALL_PIPES			0x3F
+#define REG_EN_AA_AUTO_ACK_NO_PIPES				0x00
 #define REG_EN_RXADDR_PIPES_1_2_ENABLE			0x03
 #define REG_SETUP_AW_5BYTES_ADDR_FIELD			0x03
 #define REG_SETUP_RETR_SET_15RETR_1250DELAY		0x4F
@@ -60,6 +69,7 @@ Date written:			23.12.2020
 #define REG_OBSERVE_TX_CLEAR					0x00
 #define REG_CD_CLEAR							0x00
 #define REG_RX_PW_P_PIPE_NOT_USED				0x00
+#define REG_FIFO_STATUS_GET_RX_FIFO_EMPTY_FLAG	0x01
 #define REG_DYNPD_DISABLE_DYNAMIC_PAYLOAD		0x00
 #define REG_FEATURE_DISABLE_DYNAMIC_PAYLOAD		0x00
 
@@ -124,6 +134,7 @@ Date written:			23.12.2020
 #define CMD_FLUSH_RX      	0xE2
 #define CMD_REUSE_TX_PL   	0xE3
 #define CMD_NOP           	0xFF
+#define CMD_FLUSH			0xFF
 
 /* Non-P omissions */
 #define LNA_HCURR   		0x00
