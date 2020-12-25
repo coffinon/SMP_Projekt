@@ -1,8 +1,11 @@
 /*
-Library:					NRF24L01 / NRF24L01+
+Library for:				NRF24L01
 Written by:					Kacper Kupiszewski
-Based on:					Mohamed Yaqoob
-Date Written:				23/12/2020
+Based on:					- NRF24L01 & NRF24L01+ Datasheet
+							- Arduino NRF24L01 Tutorial
+							- Mohamed Yaqoob's Library
+First update:				23/12/2020
+Last update:				25/12/2020
 */
 
 /* INCLUDES */
@@ -31,22 +34,22 @@ static SPI_HandleTypeDef nrf24_hspi;
 static UART_HandleTypeDef nrf24_huart;
 
 
-/*###########################################################################################*/
+/*############################# FUNCTIONS ###################################################*/
 
 /* CSN / CE OPERATIONS */
 
 // CSN
-void NRF24_csn(int state)
+void NRF24_csn(uint8_t state)
 {
-	if(state) HAL_GPIO_WritePin(nrf24_PORT, nrf24_CSN_PIN, GPIO_PIN_SET);
-	else HAL_GPIO_WritePin(nrf24_PORT, nrf24_CSN_PIN, GPIO_PIN_RESET);
+	if(state) 	HAL_GPIO_WritePin(nrf24_PORT, nrf24_CSN_PIN, GPIO_PIN_SET);
+	else 		HAL_GPIO_WritePin(nrf24_PORT, nrf24_CSN_PIN, GPIO_PIN_RESET);
 }
 
 // CE
-void NRF24_ce(int state)
+void NRF24_ce(uint8_t state)
 {
-	if(state) HAL_GPIO_WritePin(nrf24_PORT, nrf24_CE_PIN, GPIO_PIN_SET);
-	else HAL_GPIO_WritePin(nrf24_PORT, nrf24_CE_PIN, GPIO_PIN_RESET);
+	if(state) 	HAL_GPIO_WritePin(nrf24_PORT, nrf24_CE_PIN, GPIO_PIN_SET);
+	else 		HAL_GPIO_WritePin(nrf24_PORT, nrf24_CE_PIN, GPIO_PIN_RESET);
 }
 
 /* BASIC READ / WRITE REGISTER OPERATIONS */
@@ -54,71 +57,67 @@ void NRF24_ce(int state)
 // Read Single Byte From Register
 uint8_t NRF24_read_register(uint8_t reg)
 {
-	uint8_t spiBuf[3];
-	uint8_t retData;
-	//Put CSN low
-	NRF24_csn(0);
+	uint8_t SPI_Buf[3];
+
+	NRF24_csn(LOW);
+
 	//Transmit register address
-	spiBuf[0] = reg&0x1F;
-	HAL_SPI_Transmit(&nrf24_hspi, spiBuf, 1, 100);
+	SPI_Buf[0] = reg & CMD_REGISTER_MASK;
+	HAL_SPI_Transmit(&nrf24_hspi, SPI_Buf, 1, 100);
+
 	//Receive data
-	HAL_SPI_Receive(&nrf24_hspi, &spiBuf[1], 1, 100);
-	retData = spiBuf[1];
-	//Bring CSN high
-	NRF24_csn(1);
-	return retData;
+	HAL_SPI_Receive(&nrf24_hspi, &SPI_Buf[1], 1, 100);
+
+	NRF24_csn(HIGH);
+
+	return SPI_Buf[1];
 }
 
 // Read Multiple Bytes From Register
 void NRF24_read_registerN(uint8_t reg, uint8_t *buf, uint8_t len)
 {
-	uint8_t spiBuf[3];
-	//Put CSN low
-	NRF24_csn(0);
+	uint8_t SPI_Buf[3];
+
+	NRF24_csn(LOW);
+
 	//Transmit register address
-	spiBuf[0] = reg&0x1F;
-	//spiStatus = NRF24_SPI_Write(spiBuf, 1);
-	HAL_SPI_Transmit(&nrf24_hspi, spiBuf, 1, 100);
+	SPI_Buf[0] = reg & CMD_REGISTER_MASK;
+	HAL_SPI_Transmit(&nrf24_hspi, SPI_Buf, 1, 100);
+
 	//Receive data
 	HAL_SPI_Receive(&nrf24_hspi, buf, len, 100);
-	//Bring CSN high
-	NRF24_csn(1);
+
+	NRF24_csn(HIGH);
 }
 
 // Write Single Byte To Register
 void NRF24_write_register(uint8_t reg, uint8_t value)
 {
-	uint8_t spiBuf[3];
-	//Put CSN low
-	NRF24_csn(0);
+	uint8_t SPI_Buf[3];
+
+	NRF24_csn(LOW);
+
 	//Transmit register address and data
-	spiBuf[0] = reg|0x20;
-	spiBuf[1] = value;
-	HAL_SPI_Transmit(&nrf24_hspi, spiBuf, 2, 100);
-	//Bring CSN high
-	NRF24_csn(1);
+	SPI_Buf[0] = reg | CMD_W_REGISTER;
+	SPI_Buf[1] = value;
+	HAL_SPI_Transmit(&nrf24_hspi, SPI_Buf, 2, 100);
+
+	NRF24_csn(HIGH);
 }
 
 // Write Multiple Bytes To Register
 void NRF24_write_registerN(uint8_t reg, const uint8_t* buf, uint8_t len)
 {
-	uint8_t spiBuf[3];
-	//Put CSN low
-	NRF24_csn(0);
-	//Transmit register address and data
-	spiBuf[0] = reg|0x20;
-	HAL_SPI_Transmit(&nrf24_hspi, spiBuf, 1, 100);
-	HAL_SPI_Transmit(&nrf24_hspi, (uint8_t*)buf, len, 100);
-	//Bring CSN high
-	NRF24_csn(1);
-}
+	uint8_t SPI_Buf[3];
 
-// Get Status Register Value
-uint8_t NRF24_get_status(void)
-{
-	uint8_t statReg;
-	statReg = NRF24_read_register(REG_STATUS);
-	return statReg;
+	NRF24_csn(LOW);
+
+	//Transmit register address and data
+	SPI_Buf[0] = reg | CMD_W_REGISTER;
+	HAL_SPI_Transmit(&nrf24_hspi, SPI_Buf, 1, 100);
+	HAL_SPI_Transmit(&nrf24_hspi, (uint8_t*)buf, len, 100);
+
+	NRF24_csn(HIGH);
 }
 
 
@@ -127,69 +126,79 @@ uint8_t NRF24_get_status(void)
 // NRF24 INIT
 void NRF24_begin(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pin, SPI_HandleTypeDef nrfSPI)
 {
-	//Copy SPI handle variable
+	// Copy SPI handle, Pins And Port Variables
 	memcpy(&nrf24_hspi, &nrfSPI, sizeof(nrfSPI));
-	//Copy Pins and Port variables
-	nrf24_PORT = nrf24PORT;
-	nrf24_CSN_PIN = nrfCSN_Pin;
-	nrf24_CE_PIN = nrfCE_Pin;
 
-	//Put pins to idle state
-	NRF24_csn(1);
-	NRF24_ce(0);
-	//5 ms initial delay
+	nrf24_PORT 		= 	nrf24PORT;
+	nrf24_CSN_PIN 	= 	nrfCSN_Pin;
+	nrf24_CE_PIN 	= 	nrfCE_Pin;
+
+	// Put Pins To Idle State
+	NRF24_csn(HIGH);
+	NRF24_ce(LOW);
+
+	// Initial Delay
 	HAL_Delay(5);
 
 	//**** Soft Reset Registers default values ****//
-	NRF24_write_register(0x00, 0x0C);
-	NRF24_write_register(0x01, 0x3f);
-	NRF24_write_register(0x02, 0x03);
-	NRF24_write_register(0x03, 0x03);
-	NRF24_write_register(0x04, 0x03);
-	NRF24_write_register(0x05, 0x02);
-	NRF24_write_register(0x06, 0x0F);
-	NRF24_write_register(0x07, 0x0e);
-	NRF24_write_register(0x08, 0x00);
-	NRF24_write_register(0x09, 0x00);
+	NRF24_write_register(REG_CONFIG, 		REG_CONFIG_2BYTES_CRC);
+	NRF24_write_register(REG_EN_AA, 		REG_EN_AA_AUTO_ACK_ALL_PIPES);
+	NRF24_write_register(REG_EN_RXADDR, 	REG_EN_RXADDR_PIPES_1_2_ENABLE);
+	NRF24_write_register(REG_SETUP_AW, 		REG_SETUP_AW_5BYTES_ADDR_FIELD);
+	NRF24_write_register(REG_SETUP_RETR, 	REG_SETUP_RETR_SET_15RETR_1250DELAY);
+	NRF24_write_register(REG_RF_CH, 		REG_RF_CH_SET_CHANNEL_52);
+	NRF24_write_register(REG_RF_SETUP, 		REG_RF_SETUP_POWER_0DBM_2MBPS);
+	NRF24_write_register(REG_STATUS, 		REG_STATUS_CLEAR);
+	NRF24_write_register(REG_OBSERVE_TX, 	REG_OBSERVE_TX_CLEAR);
+	NRF24_write_register(REG_CD, 			REG_CD_CLEAR);
 
 	uint8_t pipeAddrVar[6];
-	pipeAddrVar[4]=0xE7; pipeAddrVar[3]=0xE7; pipeAddrVar[2]=0xE7; pipeAddrVar[1]=0xE7; pipeAddrVar[0]=0xE7;
-	NRF24_write_registerN(0x0A, pipeAddrVar, 5);
+	pipeAddrVar[4] = 0xE7;
+	pipeAddrVar[3] = 0xE7;
+	pipeAddrVar[2] = 0xE7;
+	pipeAddrVar[1] = 0xE7;
+	pipeAddrVar[0] = 0xE7;
+	NRF24_write_registerN(REG_RX_ADDR_P0, pipeAddrVar, 5);
 
-	pipeAddrVar[4]=0xC2; pipeAddrVar[3]=0xC2; pipeAddrVar[2]=0xC2; pipeAddrVar[1]=0xC2; pipeAddrVar[0]=0xC2;
-	NRF24_write_registerN(0x0B, pipeAddrVar, 5);
+	pipeAddrVar[4] = 0xC2;
+	pipeAddrVar[3] = 0xC2;
+	pipeAddrVar[2] = 0xC2;
+	pipeAddrVar[1] = 0xC2;
+	pipeAddrVar[0] = 0xC2;
+	NRF24_write_registerN(REG_RX_ADDR_P1, pipeAddrVar, 5);
 
-	NRF24_write_register(0x0C, 0xC3);
-	NRF24_write_register(0x0D, 0xC4);
-	NRF24_write_register(0x0E, 0xC5);
-	NRF24_write_register(0x0F, 0xC6);
+	NRF24_write_register(REG_RX_ADDR_P2, 	0xC3);
+	NRF24_write_register(REG_RX_ADDR_P3, 	0xC4);
+	NRF24_write_register(REG_RX_ADDR_P4, 	0xC5);
+	NRF24_write_register(REG_RX_ADDR_P5, 	0xC6);
 
-	pipeAddrVar[4]=0xE7; pipeAddrVar[3]=0xE7; pipeAddrVar[2]=0xE7; pipeAddrVar[1]=0xE7; pipeAddrVar[0]=0xE7;
-	NRF24_write_registerN(0x10, pipeAddrVar, 5);
+	pipeAddrVar[4] = 0xE7;
+	pipeAddrVar[3] = 0xE7;
+	pipeAddrVar[2] = 0xE7;
+	pipeAddrVar[1] = 0xE7;
+	pipeAddrVar[0] = 0xE7;
+	NRF24_write_registerN(REG_TX_ADDR, pipeAddrVar, 5);
 
-	NRF24_write_register(0x11, 0);
-	NRF24_write_register(0x12, 0);
-	NRF24_write_register(0x13, 0);
-	NRF24_write_register(0x14, 0);
-	NRF24_write_register(0x15, 0);
-	NRF24_write_register(0x16, 0);
+	NRF24_write_register(REG_RX_PW_P0, 		REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P1, 		REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P2, 		REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P3, 		REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P4, 		REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P5, 		REG_RX_PW_P_PIPE_NOT_USED);
 
 	NRF24_ACTIVATE_cmd();
-	NRF24_write_register(0x1c, 0);
-	NRF24_write_register(0x1d, 0);
+
+	NRF24_write_register(REG_DYNPD, 		REG_DYNPD_DISABLE_DYNAMIC_PAYLOAD);
+	NRF24_write_register(REG_FEATURE, 		REG_FEATURE_DISABLE_DYNAMIC_PAYLOAD);
 
 	printRadioSettings();
-	//Initialise retries 15 and delay 1250 usec
-	NRF24_setRetries(15, 15);
-	//Disable dynamic payload
-	NRF24_disableDynamicPayloads();
+
 	//Set payload size
-	NRF24_setPayloadSize(32);
+	NRF24_setPayloadSize(PAYLOAD_SIZE);
 
 	//Reset status register
 	NRF24_resetStatus();
-	//Initialise channel to 76
-	NRF24_setChannel(76);
+
 	//Flush buffers
 	NRF24_flush_tx();
 	NRF24_flush_rx();
@@ -218,21 +227,6 @@ void NRF24_ACTIVATE_cmd(void)
 	NRF24_csn(1);
 }
 
-// Set Transmission Retries And Delay
-void NRF24_setRetries(uint8_t delay, uint8_t count)
-{
-	NRF24_write_register(REG_SETUP_RETR,(delay&0xf)<<BIT_ARD | (count&0xf)<<BIT_ARC);
-}
-
-// Disable Dynamic Payloads
-void NRF24_disableDynamicPayloads(void)
-{
-	NRF24_write_register(REG_FEATURE,NRF24_read_register(REG_FEATURE) &  ~(_BV(BIT_EN_DPL)) );
-	//Disable for all pipes
-	NRF24_write_register(REG_DYNPD,0);
-	dynamic_payloads_enabled = FALSE;
-}
-
 // Set Payload Size
 void NRF24_setPayloadSize(uint8_t size)
 {
@@ -244,13 +238,6 @@ void NRF24_setPayloadSize(uint8_t size)
 void NRF24_resetStatus(void)
 {
 	NRF24_write_register(REG_STATUS,_BV(BIT_RX_DR) | _BV(BIT_TX_DS) | _BV(BIT_MAX_RT) );
-}
-
-// Set RF Channel
-void NRF24_setChannel(uint8_t channel)
-{
-	const uint8_t max_channel = 127;
-  NRF24_write_register(REG_RF_CH,MIN(channel,max_channel));
 }
 
 // Power Down
@@ -339,7 +326,7 @@ uint8_t NRF24_available(void)
 // Check If Data Are Available And On Which Pipe
 uint8_t NRF24_availablePipe(uint8_t* pipe_num)
 {
-	uint8_t status = NRF24_get_status();
+	uint8_t status = NRF24_read_register(REG_STATUS);
 
   uint8_t result = ( status & _BV(BIT_RX_DR) );
 
@@ -377,7 +364,7 @@ uint8_t NRF24_write( const void* buf, uint8_t len )
   {
     NRF24_read_registerN(REG_OBSERVE_TX,&observe_tx,1);
 		//Get status register
-		status = NRF24_get_status();
+		status = NRF24_read_register(REG_STATUS);
   }
   while( ! ( status & ( _BV(BIT_TX_DS) | _BV(BIT_MAX_RT) ) ) && ( HAL_GetTick() - sent_at < timeout ) );
 
@@ -469,7 +456,7 @@ void NRF24_startWrite( const void* buf, uint8_t len )
 // Check Interrupt Flags
 void NRF24_checkInterruptFlags(uint8_t *tx_ok, uint8_t *tx_fail, uint8_t *rx_ready)
 {
-	uint8_t status = NRF24_get_status();
+	uint8_t status = NRF24_read_register(REG_STATUS);
 	*tx_ok = 0;
 	NRF24_write_register(REG_STATUS,_BV(BIT_RX_DR) | _BV(BIT_TX_DS) | _BV(BIT_MAX_RT) );
   // Report to the user what happened

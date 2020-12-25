@@ -106,8 +106,6 @@ int main(void)
   NRF24_stopListening();
   NRF24_openWritingPipe(tx_pipe_addr);
   NRF24_setAutoAck(TRUE);
-  NRF24_setChannel(52);
-  NRF24_setPayloadSize(PAYLOAD_SIZE);
 
   uint8_t i = 30;
   /* USER CODE END 2 */
@@ -116,8 +114,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  my_tx_data[0] = i++;  //(uint8_t)((float)Joystick[0] * (100.0 / 4095.0));
-	  my_tx_data[1] = i;  //(uint8_t)((float)Joystick[1] * (100.0 / 4095.0));
+	  my_tx_data[0] = i++;  	//(uint8_t)((float)Joystick[0] * (100.0 / 4095.0));
+	  my_tx_data[1] = i;  		//(uint8_t)((float)Joystick[1] * (100.0 / 4095.0));
 	  if(NRF24_write(my_tx_data, PAYLOAD_SIZE)){
 		  my_tx_data[PAYLOAD_SIZE] = '\r';
 		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';

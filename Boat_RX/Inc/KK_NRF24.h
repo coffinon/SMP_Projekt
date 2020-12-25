@@ -36,8 +36,8 @@ static const uint8_t RF24_RX_PW_PIPE[6] = {
 
 
 /* CSN / CE OPERATIONS */
-void NRF24_csn(int mode);
-void NRF24_ce(int level);
+void NRF24_csn(uint8_t state);
+void NRF24_ce(uint8_t state);
 
 
 /* BASIC READ / WRITE REGISTER OPERATIONS */
@@ -45,16 +45,12 @@ uint8_t NRF24_read_register(uint8_t reg);
 void NRF24_read_registerN(uint8_t reg, uint8_t *buf, uint8_t len);
 void NRF24_write_register(uint8_t reg, uint8_t value);
 void NRF24_write_registerN(uint8_t reg, const uint8_t* buf, uint8_t len);
-uint8_t NRF24_get_status(void);
 
 
 /* CUSTOM SETTINGS */
 void NRF24_ACTIVATE_cmd(void);
-void NRF24_setRetries(uint8_t delay, uint8_t count);
-void NRF24_disableDynamicPayloads(void);
 void NRF24_setPayloadSize(uint8_t size);
 void NRF24_resetStatus(void);
-void NRF24_setChannel(uint8_t channel);
 void NRF24_powerDown(void);
 void NRF24_setAutoAck(uint8_t enable);
 void NRF24_openWritingPipe(uint64_t address);
