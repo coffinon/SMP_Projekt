@@ -3,7 +3,7 @@ Library for:				NRF24L01 - Polling Mode
 Written by:					Kacper Kupiszewski & Wojciech Czechowski
 Based on:					- NRF24L01 & NRF24L01+ Datasheet
 							- Arduino NRF24L01 Tutorial
-							- Mohamed Yaqoob's Youtube Channel
+							- Mohamed Yaqoob's Tutorial
 First update:				23/12/2020
 Last update:				26/12/2020
 */

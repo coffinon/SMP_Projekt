@@ -30,6 +30,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "KK_NRF24.h"
+#include "KK_LCD1602A.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,6 +109,8 @@ int main(void)
   NRF24_stopListening();
   NRF24_openWritingPipe(tx_pipe_addr);
 
+  lcd16x2_i2c_init(&hi2c1);
+  lcd16x2_i2c_clear();
   uint8_t i = 30;
   /* USER CODE END 2 */
 
@@ -121,6 +124,11 @@ int main(void)
 		  my_tx_data[PAYLOAD_SIZE] = '\r';
 		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';
 		  HAL_UART_Transmit(&huart2, my_tx_data, PAYLOAD_SIZE + 2, 100);
+		  lcd16x2_i2c_clear();
+		  lcd16x2_i2c_setCursor(0, 0);
+		  lcd16x2_i2c_printf("Speed = %d", my_tx_data[0]);
+		  lcd16x2_i2c_setCursor(1, 0);
+		  lcd16x2_i2c_printf("Direction = %d", my_tx_data[1]);
 	  }
 
 	  HAL_Delay(1000);
