@@ -1,11 +1,11 @@
 /*
-Library for:				NRF24L01
+Library for:				NRF24L01 - Polling Mode
 Written by:					Kacper Kupiszewski
 Based on:					- NRF24L01 & NRF24L01+ Datasheet
 							- Arduino NRF24L01 Tutorial
-							- Mohamed Yaqoob's Library
+							- Mohamed Yaqoob's Youtube Channel
 First update:				23/12/2020
-Last update:				25/12/2020
+Last update:				26/12/2020
 */
 
 /* INCLUDES */
@@ -16,7 +16,7 @@ Last update:				25/12/2020
 /* VARIABLES */
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
-#define _BOOL(x) (((x)>0) ? 1:0)
+#define _BOOL(x)  (((x) >  0 ) ?  1  :  0 )
 
 static uint64_t pipe0_reading_address;
 static uint8_t payload_size;
@@ -142,16 +142,16 @@ void NRF24_begin(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pi
 	HAL_Delay(5);
 
 	//**** Soft Reset Registers default values ****//
-	NRF24_write_register(REG_CONFIG, 		REG_CONFIG_2BYTES_CRC);
-	NRF24_write_register(REG_EN_AA, 		REG_EN_AA_AUTO_ACK_ALL_PIPES);
-	NRF24_write_register(REG_EN_RXADDR, 	REG_EN_RXADDR_PIPES_1_2_ENABLE);
-	NRF24_write_register(REG_SETUP_AW, 		REG_SETUP_AW_5BYTES_ADDR_FIELD);
-	NRF24_write_register(REG_SETUP_RETR, 	REG_SETUP_RETR_SET_15RETR_1250DELAY);
-	NRF24_write_register(REG_RF_CH, 		REG_RF_CH_SET_CHANNEL_52);
-	NRF24_write_register(REG_RF_SETUP, 		REG_RF_SETUP_POWER_0DBM_2MBPS);
-	NRF24_write_register(REG_STATUS, 		REG_STATUS_CLEAR);
-	NRF24_write_register(REG_OBSERVE_TX, 	REG_OBSERVE_TX_CLEAR);
-	NRF24_write_register(REG_CD, 			REG_CD_CLEAR);
+	NRF24_write_register(REG_CONFIG, 		MASK_REG_CONFIG_2BYTES_CRC);
+	NRF24_write_register(REG_EN_AA, 		MASK_REG_EN_AA_AUTO_ACK_NO_PIPES);
+	NRF24_write_register(REG_EN_RXADDR, 	MASK_REG_EN_RXADDR_PIPES_1_2_ENABLE);
+	NRF24_write_register(REG_SETUP_AW, 		MASK_REG_SETUP_AW_5BYTES_ADDR_FIELD);
+	NRF24_write_register(REG_SETUP_RETR, 	MASK_REG_SETUP_RETR_SET_15RETR_1250DELAY);
+	NRF24_write_register(REG_RF_CH, 		MASK_REG_RF_CH_SET_CHANNEL_52);
+	NRF24_write_register(REG_RF_SETUP, 		MASK_REG_RF_SETUP_POWER_0DBM_2MBPS);
+	NRF24_write_register(REG_STATUS, 		MASK_REG_STATUS_CLEAR);
+	NRF24_write_register(REG_OBSERVE_TX, 	MASK_REG_OBSERVE_TX_CLEAR);
+	NRF24_write_register(REG_CD, 			MASK_REG_CD_CLEAR);
 
 	uint8_t pipeAddrVar[6];
 	pipeAddrVar[4] = 0xE7;
@@ -180,17 +180,17 @@ void NRF24_begin(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pi
 	pipeAddrVar[0] = 0xE7;
 	NRF24_write_registerN(REG_TX_ADDR, pipeAddrVar, 5);
 
-	NRF24_write_register(REG_RX_PW_P0, 		REG_RX_PW_P_PIPE_NOT_USED);
-	NRF24_write_register(REG_RX_PW_P1, 		REG_RX_PW_P_PIPE_NOT_USED);
-	NRF24_write_register(REG_RX_PW_P2, 		REG_RX_PW_P_PIPE_NOT_USED);
-	NRF24_write_register(REG_RX_PW_P3, 		REG_RX_PW_P_PIPE_NOT_USED);
-	NRF24_write_register(REG_RX_PW_P4, 		REG_RX_PW_P_PIPE_NOT_USED);
-	NRF24_write_register(REG_RX_PW_P5, 		REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P0, 		MASK_REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P1, 		MASK_REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P2, 		MASK_REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P3, 		MASK_REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P4, 		MASK_REG_RX_PW_P_PIPE_NOT_USED);
+	NRF24_write_register(REG_RX_PW_P5, 		MASK_REG_RX_PW_P_PIPE_NOT_USED);
 
 	NRF24_ACTIVATE_cmd();
 
-	NRF24_write_register(REG_DYNPD, 		REG_DYNPD_DISABLE_DYNAMIC_PAYLOAD);
-	NRF24_write_register(REG_FEATURE, 		REG_FEATURE_DISABLE_DYNAMIC_PAYLOAD);
+	NRF24_write_register(REG_DYNPD, 		MASK_REG_DYNPD_DISABLE_DYNAMIC_PAYLOAD);
+	NRF24_write_register(REG_FEATURE, 		MASK_REG_FEATURE_DISABLE_DYNAMIC_PAYLOAD);
 
 	printRadioSettings();
 
@@ -241,22 +241,13 @@ void NRF24_setPayloadSize(uint8_t size)
 // Reset Status
 void NRF24_resetStatus(void)
 {
-	NRF24_write_register(REG_STATUS, NRF24_read_register(REG_CONFIG) & REG_CONFIG_RESET_STATUS);
+	NRF24_write_register(REG_STATUS, NRF24_read_register(REG_CONFIG) & MASK_REG_CONFIG_RESET_STATUS);
 }
 
 // Power Down
 void NRF24_powerDown(void)
 {
-	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) & ~REG_CONFIG_POWER_DOWN);
-}
-
-// Set Auto ACK To All Channels
-void NRF24_setAutoAck(uint8_t enable)
-{
-	if ( enable )
-		NRF24_write_register(REG_EN_AA, REG_EN_AA_AUTO_ACK_ALL_PIPES);
-	else
-		NRF24_write_register(REG_EN_AA, REG_EN_AA_AUTO_ACK_NO_PIPES);
+	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) & ~MASK_REG_CONFIG_POWER);
 }
 
 // Open TX Pipe
@@ -298,7 +289,7 @@ void NRF24_openReadingPipe(uint8_t number, uint64_t address)
 void NRF24_startListening(void)
 {
 	//Power up and set to RX mode
-	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) | REG_CONFIG_POWER_UP_RX);
+	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) | MASK_REG_CONFIG_POWER_UP_RX);
 
 	// Restore Pipe 0 Address If Exists
 	if(pipe0_reading_address)
@@ -329,17 +320,17 @@ uint8_t NRF24_available(void)
 {
 	uint8_t status = NRF24_read_register(REG_STATUS);
 
-	uint8_t result = (status & REG_CONFIG_GET_RX_DX);
+	uint8_t result = (status & MASK_REG_CONFIG_RX_DX);
 
 	if (result)
 	{
 		// Clear the status bit
-		NRF24_write_register(REG_STATUS, REG_CONFIG_GET_RX_DX );
+		NRF24_write_register(REG_STATUS, MASK_REG_CONFIG_RX_DX );
 
 		// Handle ack payload receipt
-		if (status & REG_CONFIG_GET_TX_DS)
+		if (status & MASK_REG_CONFIG_TX_DS)
 		{
-			NRF24_write_register(REG_STATUS, REG_CONFIG_GET_TX_DS);
+			NRF24_write_register(REG_STATUS, MASK_REG_CONFIG_TX_DS);
 		}
 	}
 	return result;
@@ -366,9 +357,9 @@ uint8_t NRF24_write( const void* buf, uint8_t len )
 		//Get status register
 		status = NRF24_read_register(REG_STATUS);
 	}
-	while( ! (status & REG_CONFIG_GET_TX_DS_MAX_RT) && ((HAL_GetTick() - sent_at) < timeout ));
+	while(!(status & MASK_REG_CONFIG_TX_DS_MAX_RT) && ((HAL_GetTick() - sent_at) < timeout ));
 
-	retStatus = NRF24_read_register(REG_STATUS) & REG_CONFIG_GET_TX_DS;
+	retStatus = NRF24_read_register(REG_STATUS) & MASK_REG_CONFIG_TX_DS;
 
 	//Power down
 	NRF24_available();
@@ -392,7 +383,7 @@ uint8_t NRF24_read( void* buf, uint8_t len )
 
 	NRF24_csn(HIGH);
 
-	uint8_t rxStatus = NRF24_read_register(REG_FIFO_STATUS) & REG_FIFO_STATUS_GET_RX_FIFO_EMPTY_FLAG;
+	uint8_t rxStatus = NRF24_read_register(REG_FIFO_STATUS) & MASK_REG_FIFO_STATUS_RX_FIFO_EMPTY_FLAG;
 
 	NRF24_flush_rx();
 	return rxStatus;
@@ -412,7 +403,7 @@ void NRF24_startWrite( const void* buf, uint8_t len )
   // Transmitter power-up
   NRF24_ce(LOW);
 
-  NRF24_write_register(REG_CONFIG, (NRF24_read_register(REG_CONFIG) | REG_CONFIG_POWER_UP) & ~REG_CONFIG_PRIM_RX);
+  NRF24_write_register(REG_CONFIG, (NRF24_read_register(REG_CONFIG) | MASK_REG_CONFIG_POWER) & ~MASK_REG_CONFIG_PRIM_RX);
 
   NRF24_ce(HIGH);
 
@@ -460,120 +451,135 @@ void printRadioSettings(void)
 {
 	uint8_t reg8Val;
 	char uartTxBuf[100];
+
 	sprintf(uartTxBuf, "\r\n**********************************************\r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
-	//a) Get CRC settings - Config Register
-	reg8Val = NRF24_read_register(0x00);
+
+	// Print CRC Setting
+	reg8Val = NRF24_read_register(REG_CONFIG);
 	if(reg8Val & (1 << 3))
 	{
-		if(reg8Val & (1 << 2)) sprintf(uartTxBuf, "CRC:\r\n		Enabled, 2 Bytes \r\n");
-		else sprintf(uartTxBuf, "CRC:\r\n		Enabled, 1 Byte \r\n");
+		if(reg8Val & (1 << 2))
+			sprintf(uartTxBuf, "CRC:\r\n		Enabled, 2 Bytes \r\n");
+		else
+			sprintf(uartTxBuf, "CRC:\r\n		Enabled, 1 Byte \r\n");
 	}
 	else
-	{
 		sprintf(uartTxBuf, "CRC:\r\n		Disabled \r\n");
-	}
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
-	//b) AutoAck on pipes
-	reg8Val = NRF24_read_register(0x01);
+
+	// Print Auto ACK Setting
+	reg8Val = NRF24_read_register(REG_EN_AA);
 	sprintf(uartTxBuf, "ENAA:\r\n		P0:	%d\r\n		P1:	%d\r\n		P2:	%d\r\n		P3:	%d\r\n		P4:	%d\r\n		P5:	%d\r\n",
 	_BOOL(reg8Val&(1<<0)), _BOOL(reg8Val&(1<<1)), _BOOL(reg8Val&(1<<2)), _BOOL(reg8Val&(1<<3)), _BOOL(reg8Val&(1<<4)), _BOOL(reg8Val&(1<<5)));
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
-	//c) Enabled Rx addresses
-	reg8Val = NRF24_read_register(0x02);
+
+	// Print Enabled RX Addresses
+	reg8Val = NRF24_read_register(REG_EN_RXADDR);
 	sprintf(uartTxBuf, "EN_RXADDR:\r\n		P0:	%d\r\n		P1:	%d\r\n		P2:	%d\r\n		P3:	%d\r\n		P4:	%d\r\n		P5:	%d\r\n",
 	_BOOL(reg8Val&(1<<0)), _BOOL(reg8Val&(1<<1)), _BOOL(reg8Val&(1<<2)), _BOOL(reg8Val&(1<<3)), _BOOL(reg8Val&(1<<4)), _BOOL(reg8Val&(1<<5)));
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
-	//d) Address width
-	reg8Val = NRF24_read_register(0x03)&0x03;
-	reg8Val +=2;
+
+	// Print Address Width
+	reg8Val = NRF24_read_register(REG_SETUP_AW) & 0x03;
+	reg8Val += 2;
 	sprintf(uartTxBuf, "SETUP_AW:\r\n		%d bytes \r\n", reg8Val);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
-	//e) RF channel
-	reg8Val = NRF24_read_register(0x05);
+
+	// Print RF Channel
+	reg8Val = NRF24_read_register(REG_RF_CH);
 	sprintf(uartTxBuf, "RF_CH:\r\n		%d CH \r\n", reg8Val&0x7F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
-	//f) Data rate & RF_PWR
-	reg8Val = NRF24_read_register(0x06);
-	if(reg8Val & (1 << 3)) sprintf(uartTxBuf, "Data Rate:\r\n		2Mbps \r\n");
-	else sprintf(uartTxBuf, "Data Rate:\r\n		1Mbps \r\n");
+
+	// Print Data Rate And Power
+	reg8Val = NRF24_read_register(REG_RF_SETUP);
+	if(reg8Val & (1 << 3))
+		sprintf(uartTxBuf, "Data Rate:\r\n		2Mbps \r\n");
+	else
+		sprintf(uartTxBuf, "Data Rate:\r\n		1Mbps \r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
+
 	reg8Val &= (3 << 1);
-	reg8Val = (reg8Val>>1);
-	if(reg8Val == 0) sprintf(uartTxBuf, "RF_PWR:\r\n		-18dB \r\n");
-	else if(reg8Val == 1) sprintf(uartTxBuf, "RF_PWR:\r\n		-12dB \r\n");
-	else if(reg8Val == 2) sprintf(uartTxBuf, "RF_PWR:\r\n		-6dB \r\n");
-	else if(reg8Val == 3) sprintf(uartTxBuf, "RF_PWR:\r\n		0dB \r\n");
+	reg8Val = (reg8Val >> 1);
+	if(reg8Val == 0)
+		sprintf(uartTxBuf, "RF_PWR:\r\n		-18dB \r\n");
+	else if(reg8Val == 1)
+		sprintf(uartTxBuf, "RF_PWR:\r\n		-12dB \r\n");
+	else if(reg8Val == 2)
+		sprintf(uartTxBuf, "RF_PWR:\r\n		-6dB \r\n");
+	else if(reg8Val == 3)
+		sprintf(uartTxBuf, "RF_PWR:\r\n		0dB \r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
-	//g) RX pipes addresses
+
+	// Print RX Pipes Addresses
 	uint8_t pipeAddrs[6];
-	NRF24_read_registerN(0x0A, pipeAddrs, 5);
+	NRF24_read_registerN(REG_RX_ADDR_P0, pipeAddrs, 5);
 	sprintf(uartTxBuf, "RX_Pipe0 Addrs:\r\n		%02X,%02X,%02X,%02X,%02X  \r\n", pipeAddrs[4], pipeAddrs[3], pipeAddrs[2],pipeAddrs[1],pipeAddrs[0]);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	NRF24_read_registerN(0x0A+1, pipeAddrs, 5);
+	NRF24_read_registerN(REG_RX_ADDR_P1, pipeAddrs, 5);
 	sprintf(uartTxBuf, "RX_Pipe1 Addrs:\r\n		%02X,%02X,%02X,%02X,%02X  \r\n", pipeAddrs[4], pipeAddrs[3], pipeAddrs[2],pipeAddrs[1],pipeAddrs[0]);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	NRF24_read_registerN(0x0A+2, pipeAddrs, 1);
+	NRF24_read_registerN(REG_RX_ADDR_P2, pipeAddrs, 1);
 	sprintf(uartTxBuf, "RX_Pipe2 Addrs:\r\n		xx,xx,xx,xx,%02X  \r\n", pipeAddrs[0]);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	NRF24_read_registerN(0x0A+3, pipeAddrs, 1);
+	NRF24_read_registerN(REG_RX_ADDR_P3, pipeAddrs, 1);
 	sprintf(uartTxBuf, "RX_Pipe3 Addrs:\r\n		xx,xx,xx,xx,%02X  \r\n", pipeAddrs[0]);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	NRF24_read_registerN(0x0A+4, pipeAddrs, 1);
+	NRF24_read_registerN(REG_RX_ADDR_P4, pipeAddrs, 1);
 	sprintf(uartTxBuf, "RX_Pipe4 Addrs:\r\n		xx,xx,xx,xx,%02X  \r\n", pipeAddrs[0]);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	NRF24_read_registerN(0x0A+5, pipeAddrs, 1);
+	NRF24_read_registerN(REG_RX_ADDR_P5, pipeAddrs, 1);
 	sprintf(uartTxBuf, "RX_Pipe5 Addrs:\r\n		xx,xx,xx,xx,%02X  \r\n", pipeAddrs[0]);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	NRF24_read_registerN(0x0A+6, pipeAddrs, 5);
+	NRF24_read_registerN(REG_TX_ADDR, pipeAddrs, 5);
 	sprintf(uartTxBuf, "TX Addrs:\r\n		%02X,%02X,%02X,%02X,%02X  \r\n", pipeAddrs[4], pipeAddrs[3], pipeAddrs[2],pipeAddrs[1],pipeAddrs[0]);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	//h) RX PW (Payload Width 0 - 32)
-	reg8Val = NRF24_read_register(0x11);
-	sprintf(uartTxBuf, "RX_PW_P0:\r\n		%d bytes \r\n", reg8Val&0x3F);
+	// Print RX Payload Width In Each Pipe
+	reg8Val = NRF24_read_register(REG_RX_PW_P0);
+	sprintf(uartTxBuf, "RX_PW_P0:\r\n		%d bytes \r\n", reg8Val & 0x3F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	reg8Val = NRF24_read_register(0x11+1);
-	sprintf(uartTxBuf, "RX_PW_P1:\r\n		%d bytes \r\n", reg8Val&0x3F);
+	reg8Val = NRF24_read_register(REG_RX_PW_P1);
+	sprintf(uartTxBuf, "RX_PW_P1:\r\n		%d bytes \r\n", reg8Val & 0x3F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	reg8Val = NRF24_read_register(0x11+2);
-	sprintf(uartTxBuf, "RX_PW_P2:\r\n		%d bytes \r\n", reg8Val&0x3F);
+	reg8Val = NRF24_read_register(REG_RX_PW_P2);
+	sprintf(uartTxBuf, "RX_PW_P2:\r\n		%d bytes \r\n", reg8Val & 0x3F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	reg8Val = NRF24_read_register(0x11+3);
-	sprintf(uartTxBuf, "RX_PW_P3:\r\n		%d bytes \r\n", reg8Val&0x3F);
+	reg8Val = NRF24_read_register(REG_RX_PW_P3);
+	sprintf(uartTxBuf, "RX_PW_P3:\r\n		%d bytes \r\n", reg8Val & 0x3F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	reg8Val = NRF24_read_register(0x11+4);
-	sprintf(uartTxBuf, "RX_PW_P4:\r\n		%d bytes \r\n", reg8Val&0x3F);
+	reg8Val = NRF24_read_register(REG_RX_PW_P4);
+	sprintf(uartTxBuf, "RX_PW_P4:\r\n		%d bytes \r\n", reg8Val & 0x3F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	reg8Val = NRF24_read_register(0x11+5);
-	sprintf(uartTxBuf, "RX_PW_P5:\r\n		%d bytes \r\n", reg8Val&0x3F);
+	reg8Val = NRF24_read_register(REG_RX_PW_P5);
+	sprintf(uartTxBuf, "RX_PW_P5:\r\n		%d bytes \r\n", reg8Val & 0x3F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	//i) Dynamic payload enable for each pipe
-	reg8Val = NRF24_read_register(0x1c);
+	// Print Dynamic Payload Enable For Each Pipe
+	reg8Val = NRF24_read_register(REG_DYNPD);
 	sprintf(uartTxBuf, "DYNPD_pipe:\r\n		P0:	%d\r\n		P1:	%d\r\n		P2:	%d\r\n		P3:	%d\r\n		P4:	%d\r\n		P5:	%d\r\n",
 	_BOOL(reg8Val&(1<<0)), _BOOL(reg8Val&(1<<1)), _BOOL(reg8Val&(1<<2)), _BOOL(reg8Val&(1<<3)), _BOOL(reg8Val&(1<<4)), _BOOL(reg8Val&(1<<5)));
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	//j) EN_DPL (is Dynamic payload feature enabled ?)
-	reg8Val = NRF24_read_register(0x1d);
-	if(reg8Val&(1<<2)) sprintf(uartTxBuf, "EN_DPL:\r\n		Enabled \r\n");
+	// Print If Dynamic Payload Feature Is Enabled
+	reg8Val = NRF24_read_register(REG_FEATURE);
+	if(reg8Val & (1 << 2)) sprintf(uartTxBuf, "EN_DPL:\r\n		Enabled \r\n");
 	else sprintf(uartTxBuf, "EN_DPL:\r\n		Disabled \r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-	//k) EN_ACK_PAY
-	if(reg8Val&(1<<1)) sprintf(uartTxBuf, "EN_ACK_PAY:\r\n		Enabled \r\n");
+	// Print If ACK Payload Feature Is Enabled
+	if(reg8Val & (1 << 1)) sprintf(uartTxBuf, "EN_ACK_PAY:\r\n		Enabled \r\n");
 	else sprintf(uartTxBuf, "EN_ACK_PAY:\r\n		Disabled \r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 

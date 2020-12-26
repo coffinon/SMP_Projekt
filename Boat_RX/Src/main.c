@@ -97,9 +97,7 @@ int main(void)
 
   printRadioSettings();
 
-  NRF24_setAutoAck(TRUE);
   NRF24_openReadingPipe(1, rx_pipe_addr);
-
   NRF24_startListening();
 
   /* USER CODE END 2 */

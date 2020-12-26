@@ -22,6 +22,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include "i2c.h"
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
@@ -96,6 +97,7 @@ int main(void)
   MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_ADC1_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc1, Joystick, 2);
   NRF24_begin(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, hspi2);
@@ -105,7 +107,6 @@ int main(void)
 
   NRF24_stopListening();
   NRF24_openWritingPipe(tx_pipe_addr);
-  NRF24_setAutoAck(TRUE);
 
   uint8_t i = 30;
   /* USER CODE END 2 */

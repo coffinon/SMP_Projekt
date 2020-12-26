@@ -9,6 +9,7 @@ Date Written:				23/12/2020
 #include "stm32f4xx_hal.h"   //** Change this according to your STM32 series **//
 #include "nRF24L01.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 /* PIPE VECTORS */
@@ -52,7 +53,6 @@ void NRF24_ACTIVATE_cmd(void);
 void NRF24_setPayloadSize(uint8_t size);
 void NRF24_resetStatus(void);
 void NRF24_powerDown(void);
-void NRF24_setAutoAck(uint8_t enable);
 void NRF24_openWritingPipe(uint64_t address);
 void NRF24_openReadingPipe(uint8_t number, uint64_t address);
 void NRF24_startListening(void);
