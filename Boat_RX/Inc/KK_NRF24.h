@@ -1,16 +1,21 @@
 /*
-Library:					NRF24L01 / NRF24L01+
-Written by:					Kacper Kupiszewski
-Based on:					Mohamed Yaqoob
-Date Written:				23/12/2020
+Library for:				NRF24L01 - Polling Mode
+Written by:					Kacper Kupiszewski & Wojciech Czechowski
+Based on:					- NRF24L01 & NRF24L01+ Datasheet
+							- Arduino NRF24L01 Tutorial
+							- Mohamed Yaqoob's Youtube Channel
+First update:				23/12/2020
+Last update:				26/12/2020
 */
 
 //List of header files
 #include "stm32f4xx_hal.h"   //** Change this according to your STM32 series **//
 #include "nRF24L01.h"
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#ifndef KK_NRF24_H
+#define KK_NRF24_H
 
 /* PIPE VECTORS */
 
@@ -37,8 +42,8 @@ static const uint8_t RF24_RX_PW_PIPE[6] = {
 
 
 /* CSN / CE OPERATIONS */
-void NRF24_csn(uint8_t state);
-void NRF24_ce(uint8_t state);
+void NRF24_CSN(uint8_t state);
+void NRF24_CE(uint8_t state);
 
 
 /* BASIC READ / WRITE REGISTER OPERATIONS */
@@ -50,20 +55,19 @@ void NRF24_write_registerN(uint8_t reg, const uint8_t* buf, uint8_t len);
 
 /* CUSTOM SETTINGS */
 void NRF24_ACTIVATE_cmd(void);
-void NRF24_setPayloadSize(uint8_t size);
 void NRF24_resetStatus(void);
+void NRF24_setPayloadSize(uint8_t size);
+uint8_t NRF24_getPayloadSize(void);
 void NRF24_powerDown(void);
-void NRF24_openWritingPipe(uint64_t address);
-void NRF24_openReadingPipe(uint8_t number, uint64_t address);
-void NRF24_startListening(void);
-void NRF24_stopListening(void);
 
 /* PIPE OPERATIONS */
 uint8_t NRF24_available(void);
 uint8_t NRF24_write( const void* buf, uint8_t len );
 uint8_t NRF24_read( void* buf, uint8_t len );
-uint8_t NRF24_getPayloadSize(void);
-void NRF24_startWrite( const void* buf, uint8_t len );
+void NRF24_openWritingPipe(uint64_t address);
+void NRF24_openReadingPipe(uint8_t number, uint64_t address);
+void NRF24_startListening(void);
+void NRF24_stopListening(void);
 
 
 /* DEFAULT INITIALIZATION */
@@ -72,10 +76,11 @@ void nrf24_DebugUART_Init(UART_HandleTypeDef nrf24Uart);
 
 
 /* Flush RX / TX Functions */
-void NRF24_flush_tx(void);
-void NRF24_flush_rx(void);
+void NRF24_flush_TX(void);
+void NRF24_flush_RX(void);
 
 
 /* PRINT SETTINGS FUNCTIONS */
 void printRadioSettings(void);
 
+#endif

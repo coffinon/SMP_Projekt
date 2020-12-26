@@ -1,11 +1,15 @@
 /*
-Library:				NRF24L01 REGISTER MAP
-Written by:				Kacper Kupiszewski
-Based on:				Mohamed Yaqoob library
-Date written:			23.12.2020
+Library for:				NRF24L01 - Polling Mode
+Written by:					Kacper Kupiszewski & Wojciech Czechowski
+Based on:					- NRF24L01 & NRF24L01+ Datasheet
+							- Arduino NRF24L01 Tutorial
+							- Mohamed Yaqoob's Youtube Channel
+First update:				23/12/2020
+Last update:				26/12/2020
 */
 
-#define _BV(x) (1<<(x))
+#ifndef NRF24L01_H
+#define NRF24L01_H
 
 /* General */
 #define LOW					0x00
@@ -145,3 +149,5 @@ Date written:			23.12.2020
 #define RF_DR_HIGH  		0x03
 #define RF_PWR_LOW  		0x01
 #define RF_PWR_HIGH 		0x02
+
+#endif

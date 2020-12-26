@@ -1,6 +1,6 @@
 /*
 Library for:				NRF24L01 - Polling Mode
-Written by:					Kacper Kupiszewski
+Written by:					Kacper Kupiszewski & Wojciech Czechowski
 Based on:					- NRF24L01 & NRF24L01+ Datasheet
 							- Arduino NRF24L01 Tutorial
 							- Mohamed Yaqoob's Youtube Channel
@@ -31,12 +31,10 @@ static SPI_HandleTypeDef 	nrf24_hspi;
 static UART_HandleTypeDef 	nrf24_huart;
 
 
-/*############################# FUNCTIONS ###################################################*/
-
-/* CSN / CE OPERATIONS */
+/*########################### CSN / CE OPERATIONS ###########################################*/
 
 // CSN
-void NRF24_csn(uint8_t state)
+void NRF24_CSN(uint8_t state)
 {
 	if (state)
 		HAL_GPIO_WritePin(nrf24_PORT, nrf24_CSN_PIN, GPIO_PIN_SET);
@@ -45,7 +43,7 @@ void NRF24_csn(uint8_t state)
 }
 
 // CE
-void NRF24_ce(uint8_t state)
+void NRF24_CE(uint8_t state)
 {
 	if (state)
 		HAL_GPIO_WritePin(nrf24_PORT, nrf24_CE_PIN, GPIO_PIN_SET);
@@ -53,14 +51,14 @@ void NRF24_ce(uint8_t state)
 		HAL_GPIO_WritePin(nrf24_PORT, nrf24_CE_PIN, GPIO_PIN_RESET);
 }
 
-/* BASIC READ / WRITE REGISTER OPERATIONS */
+/*##################### BASIC READ / WRITE REGISTER OPERATIONS ##############################*/
 
 // Read Single Byte From Register
 uint8_t NRF24_read_register(uint8_t reg)
 {
 	uint8_t SPI_Buf[3];
 
-	NRF24_csn(LOW);
+	NRF24_CSN(LOW);
 
 	//Transmit register address
 	SPI_Buf[0] = reg & CMD_REGISTER_MASK;
@@ -69,7 +67,7 @@ uint8_t NRF24_read_register(uint8_t reg)
 	//Receive data
 	HAL_SPI_Receive(&nrf24_hspi, &SPI_Buf[1], 1, 100);
 
-	NRF24_csn(HIGH);
+	NRF24_CSN(HIGH);
 
 	return SPI_Buf[1];
 }
@@ -79,7 +77,7 @@ void NRF24_read_registerN(uint8_t reg, uint8_t *buf, uint8_t len)
 {
 	uint8_t SPI_Buf[3];
 
-	NRF24_csn(LOW);
+	NRF24_CSN(LOW);
 
 	//Transmit register address
 	SPI_Buf[0] = reg & CMD_REGISTER_MASK;
@@ -88,7 +86,7 @@ void NRF24_read_registerN(uint8_t reg, uint8_t *buf, uint8_t len)
 	//Receive data
 	HAL_SPI_Receive(&nrf24_hspi, buf, len, 100);
 
-	NRF24_csn(HIGH);
+	NRF24_CSN(HIGH);
 }
 
 // Write Single Byte To Register
@@ -96,14 +94,14 @@ void NRF24_write_register(uint8_t reg, uint8_t value)
 {
 	uint8_t SPI_Buf[3];
 
-	NRF24_csn(LOW);
+	NRF24_CSN(LOW);
 
 	//Transmit register address and data
 	SPI_Buf[0] = reg | CMD_W_REGISTER;
 	SPI_Buf[1] = value;
 	HAL_SPI_Transmit(&nrf24_hspi, SPI_Buf, 2, 100);
 
-	NRF24_csn(HIGH);
+	NRF24_CSN(HIGH);
 }
 
 // Write Multiple Bytes To Register
@@ -111,18 +109,227 @@ void NRF24_write_registerN(uint8_t reg, const uint8_t* buf, uint8_t len)
 {
 	uint8_t SPI_Buf[3];
 
-	NRF24_csn(LOW);
+	NRF24_CSN(LOW);
 
 	//Transmit register address and data
 	SPI_Buf[0] = reg | CMD_W_REGISTER;
 	HAL_SPI_Transmit(&nrf24_hspi, SPI_Buf, 1, 100);
 	HAL_SPI_Transmit(&nrf24_hspi, (uint8_t*)buf, len, 100);
 
-	NRF24_csn(HIGH);
+	NRF24_CSN(HIGH);
 }
 
 
-/* DEFAULT INITIALIZATION */
+/*########################### CUSTOM SETTINGS AND COMMANDS ##################################*/
+
+// Activate CMD
+void NRF24_ACTIVATE_cmd(void)
+{
+	uint8_t cmdRxBuf[2];
+
+	NRF24_CSN(LOW);
+
+	//Read data from Rx payload buffer
+	cmdRxBuf[0] = CMD_ACTIVATE;
+	cmdRxBuf[1] = 0x73;
+	HAL_SPI_Transmit(&nrf24_hspi, cmdRxBuf, 2, 100);
+
+	NRF24_CSN(HIGH);
+}
+
+// Set Payload Size
+void NRF24_setPayloadSize(uint8_t size)
+{
+	const uint8_t max_payload_size = 32;
+	payload_size = MIN(size, max_payload_size);
+}
+
+// Get Payload Size
+uint8_t NRF24_getPayloadSize(void)
+{
+	return payload_size;
+}
+
+// Reset Status
+void NRF24_resetStatus(void)
+{
+	NRF24_write_register(REG_STATUS, NRF24_read_register(REG_CONFIG) & MASK_REG_CONFIG_RESET_STATUS);
+}
+
+// Power Down
+void NRF24_powerDown(void)
+{
+	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) & ~MASK_REG_CONFIG_POWER);
+}
+
+
+/*############################### PIPE OPERATIONS ###########################################*/
+
+// Check For Available Data To Read
+uint8_t NRF24_available(void)
+{
+	uint8_t status = NRF24_read_register(REG_STATUS);
+
+	uint8_t result = (status & MASK_REG_CONFIG_RX_DX);
+
+	if (result)
+	{
+		// Clear the status bit
+		NRF24_write_register(REG_STATUS, MASK_REG_CONFIG_RX_DX );
+
+		// Handle ack payload receipt
+		if (status & MASK_REG_CONFIG_TX_DS)
+		{
+			NRF24_write_register(REG_STATUS, MASK_REG_CONFIG_TX_DS);
+		}
+	}
+	return result;
+}
+
+// Write Data
+uint8_t NRF24_write( const void* buf, uint8_t len )
+{
+	// Data monitor
+	uint8_t retStatus;
+	uint8_t observe_tx;
+	uint8_t status;
+	const uint32_t timeout = 10;
+
+	NRF24_resetStatus();
+
+	// Transmitter power-up
+	NRF24_CE(LOW);
+
+	NRF24_write_register(REG_CONFIG, (NRF24_read_register(REG_CONFIG) | MASK_REG_CONFIG_POWER) & ~MASK_REG_CONFIG_PRIM_RX);
+
+	NRF24_CE(HIGH);
+
+	HAL_Delay(1);
+
+	// Send the payload
+	uint8_t wrPayloadCmd;
+
+	NRF24_CSN(LOW);
+
+	//Send Write Tx payload command followed by pbuf data
+	wrPayloadCmd = CMD_W_TX_PAYLOAD;
+	HAL_SPI_Transmit(&nrf24_hspi, &wrPayloadCmd, 1, 100);
+	HAL_SPI_Transmit(&nrf24_hspi, (uint8_t *)buf, len, 100);
+
+	NRF24_CSN(HIGH);
+
+	// Enable Tx for 1ms
+	NRF24_CE(HIGH);
+
+	HAL_Delay(1);
+
+	NRF24_CE(LOW);
+
+	uint32_t sent_at = HAL_GetTick();
+	do
+	{
+		NRF24_read_registerN(REG_OBSERVE_TX, &observe_tx, 1);
+
+		//Get status register
+		status = NRF24_read_register(REG_STATUS);
+	}
+	while(!(status & MASK_REG_CONFIG_TX_DS_MAX_RT) && ((HAL_GetTick() - sent_at) < timeout ));
+
+	retStatus = NRF24_read_register(REG_STATUS) & MASK_REG_CONFIG_TX_DS;
+
+	//Power down
+	NRF24_available();
+	NRF24_flush_TX();
+
+	return retStatus;
+}
+
+// Read Data
+uint8_t NRF24_read( void* buf, uint8_t len )
+{
+	uint8_t cmdRxBuf;
+	uint8_t data_len = MIN(len, NRF24_getPayloadSize());
+
+	NRF24_CSN(LOW);
+
+	//Read data from Rx payload buffer
+	cmdRxBuf = CMD_R_RX_PAYLOAD;
+	HAL_SPI_Transmit(&nrf24_hspi, &cmdRxBuf, 1, 100);
+	HAL_SPI_Receive(&nrf24_hspi, buf, data_len, 100);
+
+	NRF24_CSN(HIGH);
+
+	uint8_t rxStatus = NRF24_read_register(REG_FIFO_STATUS) & MASK_REG_FIFO_STATUS_RX_FIFO_EMPTY_FLAG;
+
+	NRF24_flush_RX();
+	return rxStatus;
+}
+
+// Open TX Pipe
+void NRF24_openWritingPipe(uint64_t address)
+{
+	NRF24_write_registerN(REG_RX_ADDR_P0, (uint8_t *)(&address), 5);
+	NRF24_write_registerN(REG_TX_ADDR, (uint8_t *)(&address), 5);
+
+	NRF24_write_register(REG_RX_PW_P0, payload_size);
+}
+
+// Open RX Pipe
+void NRF24_openReadingPipe(uint8_t number, uint64_t address)
+{
+	if (number == 0)
+		pipe0_reading_address = address;
+
+	if(number <= 6)
+	{
+		if(number < 2)
+		{
+			//Address width is 5 bytes
+			NRF24_write_registerN(NRF24_ADDR_REGS[number], (uint8_t *)(&address), 5);
+		}
+		else
+		{
+			NRF24_write_registerN(NRF24_ADDR_REGS[number], (uint8_t *)(&address), 1);
+		}
+
+		//Write payload size
+		NRF24_write_register(RF24_RX_PW_PIPE[number], payload_size);
+
+		//Enable pipe
+		NRF24_write_register(REG_EN_RXADDR, NRF24_read_register(REG_EN_RXADDR) | (1 << number));
+	}
+}
+
+// Start Listening On Pipes
+void NRF24_startListening(void)
+{
+	//Power up and set to RX mode
+	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) | MASK_REG_CONFIG_POWER_UP_RX);
+
+	// Restore Pipe 0 Address If Exists
+	if(pipe0_reading_address)
+		NRF24_write_registerN(REG_RX_ADDR_P0, (uint8_t *)(&pipe0_reading_address), 5);
+
+	//Flush buffers
+	NRF24_flush_TX();
+	NRF24_flush_RX();
+
+	NRF24_CE(HIGH);
+	// Wait 1 ms For The Radio To Come On
+	HAL_Delay(1);
+}
+
+// Stop Listening On Pipes
+void NRF24_stopListening(void)
+{
+	NRF24_CE(LOW);
+
+	NRF24_flush_TX();
+	NRF24_flush_RX();
+}
+
+
+/*########################## DEFAULT INITIALIZATION #########################################*/
 
 // NRF24 INIT
 void NRF24_begin(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pin, SPI_HandleTypeDef nrfSPI)
@@ -135,13 +342,13 @@ void NRF24_begin(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pi
 	nrf24_CE_PIN 	= 	nrfCE_Pin;
 
 	// Put Pins To Idle State
-	NRF24_csn(HIGH);
-	NRF24_ce(LOW);
+	NRF24_CSN(HIGH);
+	NRF24_CE(LOW);
 
 	// Initial Delay
 	HAL_Delay(5);
 
-	//**** Soft Reset Registers default values ****//
+	// Soft Reset Registers
 	NRF24_write_register(REG_CONFIG, 		MASK_REG_CONFIG_2BYTES_CRC);
 	NRF24_write_register(REG_EN_AA, 		MASK_REG_EN_AA_AUTO_ACK_NO_PIPES);
 	NRF24_write_register(REG_EN_RXADDR, 	MASK_REG_EN_RXADDR_PIPES_1_2_ENABLE);
@@ -201,8 +408,8 @@ void NRF24_begin(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pi
 	NRF24_resetStatus();
 
 	//Flush buffers
-	NRF24_flush_tx();
-	NRF24_flush_rx();
+	NRF24_flush_TX();
+	NRF24_flush_RX();
 
 	NRF24_powerDown();
 }
@@ -214,237 +421,22 @@ void nrf24_DebugUART_Init(UART_HandleTypeDef nrf24Uart)
 }
 
 
-/* CUSTOM SETTINGS */
-
-// Activate CMD
-void NRF24_ACTIVATE_cmd(void)
-{
-	uint8_t cmdRxBuf[2];
-
-	NRF24_csn(LOW);
-
-	//Read data from Rx payload buffer
-	cmdRxBuf[0] = CMD_ACTIVATE;
-	cmdRxBuf[1] = 0x73;
-	HAL_SPI_Transmit(&nrf24_hspi, cmdRxBuf, 2, 100);
-
-	NRF24_csn(HIGH);
-}
-
-// Set Payload Size
-void NRF24_setPayloadSize(uint8_t size)
-{
-	const uint8_t max_payload_size = 32;
-	payload_size = MIN(size, max_payload_size);
-}
-
-// Reset Status
-void NRF24_resetStatus(void)
-{
-	NRF24_write_register(REG_STATUS, NRF24_read_register(REG_CONFIG) & MASK_REG_CONFIG_RESET_STATUS);
-}
-
-// Power Down
-void NRF24_powerDown(void)
-{
-	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) & ~MASK_REG_CONFIG_POWER);
-}
-
-// Open TX Pipe
-void NRF24_openWritingPipe(uint64_t address)
-{
-	NRF24_write_registerN(REG_RX_ADDR_P0, (uint8_t *)(&address), 5);
-	NRF24_write_registerN(REG_TX_ADDR, (uint8_t *)(&address), 5);
-
-	NRF24_write_register(REG_RX_PW_P0, payload_size);
-}
-
-// Open RX Pipe
-void NRF24_openReadingPipe(uint8_t number, uint64_t address)
-{
-	if (number == 0)
-		pipe0_reading_address = address;
-
-	if(number <= 6)
-	{
-		if(number < 2)
-		{
-			//Address width is 5 bytes
-			NRF24_write_registerN(NRF24_ADDR_REGS[number], (uint8_t *)(&address), 5);
-		}
-		else
-		{
-			NRF24_write_registerN(NRF24_ADDR_REGS[number], (uint8_t *)(&address), 1);
-		}
-
-		//Write payload size
-		NRF24_write_register(RF24_RX_PW_PIPE[number], payload_size);
-
-		//Enable pipe
-		NRF24_write_register(REG_EN_RXADDR, NRF24_read_register(REG_EN_RXADDR) | (1 << number));
-	}
-}
-
-// Start Listening On Pipes
-void NRF24_startListening(void)
-{
-	//Power up and set to RX mode
-	NRF24_write_register(REG_CONFIG, NRF24_read_register(REG_CONFIG) | MASK_REG_CONFIG_POWER_UP_RX);
-
-	// Restore Pipe 0 Address If Exists
-	if(pipe0_reading_address)
-		NRF24_write_registerN(REG_RX_ADDR_P0, (uint8_t *)(&pipe0_reading_address), 5);
-
-	//Flush buffers
-	NRF24_flush_tx();
-	NRF24_flush_rx();
-
-	NRF24_ce(HIGH);
-	// Wait 1 ms For The Radio To Come On
-	HAL_Delay(1);
-}
-
-// Stop Listening On Pipes
-void NRF24_stopListening(void)
-{
-	NRF24_ce(LOW);
-
-	NRF24_flush_tx();
-	NRF24_flush_rx();
-}
-
-/* PIPE OPERATIONS */
-
-// Check For Available Data To Read
-uint8_t NRF24_available(void)
-{
-	uint8_t status = NRF24_read_register(REG_STATUS);
-
-	uint8_t result = (status & MASK_REG_CONFIG_RX_DX);
-
-	if (result)
-	{
-		// Clear the status bit
-		NRF24_write_register(REG_STATUS, MASK_REG_CONFIG_RX_DX );
-
-		// Handle ack payload receipt
-		if (status & MASK_REG_CONFIG_TX_DS)
-		{
-			NRF24_write_register(REG_STATUS, MASK_REG_CONFIG_TX_DS);
-		}
-	}
-	return result;
-}
-
-// Write Data
-uint8_t NRF24_write( const void* buf, uint8_t len )
-{
-	// Data monitor
-	uint8_t retStatus;
-	uint8_t observe_tx;
-	uint8_t status;
-	const uint32_t timeout = 10;
-
-	//Start writing
-	NRF24_resetStatus();
-	NRF24_startWrite(buf,len);
-
-	uint32_t sent_at = HAL_GetTick();
-	do
-	{
-		NRF24_read_registerN(REG_OBSERVE_TX, &observe_tx, 1);
-
-		//Get status register
-		status = NRF24_read_register(REG_STATUS);
-	}
-	while(!(status & MASK_REG_CONFIG_TX_DS_MAX_RT) && ((HAL_GetTick() - sent_at) < timeout ));
-
-	retStatus = NRF24_read_register(REG_STATUS) & MASK_REG_CONFIG_TX_DS;
-
-	//Power down
-	NRF24_available();
-	NRF24_flush_tx();
-
-	return retStatus;
-}
-
-// Read Data
-uint8_t NRF24_read( void* buf, uint8_t len )
-{
-	uint8_t cmdRxBuf;
-	uint8_t data_len = MIN(len, NRF24_getPayloadSize());
-
-	NRF24_csn(LOW);
-
-	//Read data from Rx payload buffer
-	cmdRxBuf = CMD_R_RX_PAYLOAD;
-	HAL_SPI_Transmit(&nrf24_hspi, &cmdRxBuf, 1, 100);
-	HAL_SPI_Receive(&nrf24_hspi, buf, data_len, 100);
-
-	NRF24_csn(HIGH);
-
-	uint8_t rxStatus = NRF24_read_register(REG_FIFO_STATUS) & MASK_REG_FIFO_STATUS_RX_FIFO_EMPTY_FLAG;
-
-	NRF24_flush_rx();
-	return rxStatus;
-}
-
-
-// Get Payload Size
-uint8_t NRF24_getPayloadSize(void)
-{
-	return payload_size;
-}
-
-
-//40. Start write (for IRQ mode)
-void NRF24_startWrite( const void* buf, uint8_t len )
-{
-  // Transmitter power-up
-  NRF24_ce(LOW);
-
-  NRF24_write_register(REG_CONFIG, (NRF24_read_register(REG_CONFIG) | MASK_REG_CONFIG_POWER) & ~MASK_REG_CONFIG_PRIM_RX);
-
-  NRF24_ce(HIGH);
-
-  HAL_Delay(1);
-
-  // Send the payload
-  uint8_t wrPayloadCmd;
-
-  NRF24_csn(LOW);
-
-  //Send Write Tx payload command followed by pbuf data
-  wrPayloadCmd = CMD_W_TX_PAYLOAD;
-  HAL_SPI_Transmit(&nrf24_hspi, &wrPayloadCmd, 1, 100);
-  HAL_SPI_Transmit(&nrf24_hspi, (uint8_t *)buf, len, 100);
-
-  NRF24_csn(HIGH);
-
-  // Enable Tx for 1ms
-  NRF24_ce(HIGH);
-
-  HAL_Delay(1);
-
-  NRF24_ce(LOW);
-}
-
-
-/* Flush RX / TX Functions */
+/*############################ Flush RX / TX Functions ######################################*/
 
 // Flush TX Buffer
-void NRF24_flush_tx(void)
+void NRF24_flush_TX(void)
 {
 	NRF24_write_register(CMD_FLUSH_TX, CMD_FLUSH);
 }
 
 // Flush RX Buffer
-void NRF24_flush_rx(void)
+void NRF24_flush_RX(void)
 {
 	NRF24_write_register(CMD_FLUSH_RX, CMD_FLUSH);
 }
 
-/* PRINT SETTINGS FUNCTIONS */
+
+/*############################ PRINT SETTINGS FUNCTIONS #####################################*/
 
 // Print Radio Settings
 void printRadioSettings(void)
@@ -471,13 +463,13 @@ void printRadioSettings(void)
 	// Print Auto ACK Setting
 	reg8Val = NRF24_read_register(REG_EN_AA);
 	sprintf(uartTxBuf, "ENAA:\r\n		P0:	%d\r\n		P1:	%d\r\n		P2:	%d\r\n		P3:	%d\r\n		P4:	%d\r\n		P5:	%d\r\n",
-	_BOOL(reg8Val&(1<<0)), _BOOL(reg8Val&(1<<1)), _BOOL(reg8Val&(1<<2)), _BOOL(reg8Val&(1<<3)), _BOOL(reg8Val&(1<<4)), _BOOL(reg8Val&(1<<5)));
+	_BOOL(reg8Val & (1 << 0)), _BOOL(reg8Val & (1 << 1)), _BOOL(reg8Val & (1 << 2)), _BOOL(reg8Val & (1 << 3)), _BOOL(reg8Val & (1 << 4)), _BOOL(reg8Val & (1 << 5)));
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
 	// Print Enabled RX Addresses
 	reg8Val = NRF24_read_register(REG_EN_RXADDR);
 	sprintf(uartTxBuf, "EN_RXADDR:\r\n		P0:	%d\r\n		P1:	%d\r\n		P2:	%d\r\n		P3:	%d\r\n		P4:	%d\r\n		P5:	%d\r\n",
-	_BOOL(reg8Val&(1<<0)), _BOOL(reg8Val&(1<<1)), _BOOL(reg8Val&(1<<2)), _BOOL(reg8Val&(1<<3)), _BOOL(reg8Val&(1<<4)), _BOOL(reg8Val&(1<<5)));
+	_BOOL(reg8Val & (1 << 0)), _BOOL(reg8Val & (1 << 1)), _BOOL(reg8Val & (1 << 2)), _BOOL(reg8Val & (1 << 3)), _BOOL(reg8Val & (1 << 4)), _BOOL(reg8Val & (1 << 5)));
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
 	// Print Address Width
@@ -488,7 +480,7 @@ void printRadioSettings(void)
 
 	// Print RF Channel
 	reg8Val = NRF24_read_register(REG_RF_CH);
-	sprintf(uartTxBuf, "RF_CH:\r\n		%d CH \r\n", reg8Val&0x7F);
+	sprintf(uartTxBuf, "RF_CH:\r\n		%d CH \r\n", reg8Val & 0x7F);
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
 	// Print Data Rate And Power
@@ -508,7 +500,7 @@ void printRadioSettings(void)
 	else if(reg8Val == 2)
 		sprintf(uartTxBuf, "RF_PWR:\r\n		-6dB \r\n");
 	else if(reg8Val == 3)
-		sprintf(uartTxBuf, "RF_PWR:\r\n		0dB \r\n");
+		sprintf(uartTxBuf, "RF_PWR:\r\n		 0dB \r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
 	// Print RX Pipes Addresses
@@ -569,7 +561,7 @@ void printRadioSettings(void)
 	// Print Dynamic Payload Enable For Each Pipe
 	reg8Val = NRF24_read_register(REG_DYNPD);
 	sprintf(uartTxBuf, "DYNPD_pipe:\r\n		P0:	%d\r\n		P1:	%d\r\n		P2:	%d\r\n		P3:	%d\r\n		P4:	%d\r\n		P5:	%d\r\n",
-	_BOOL(reg8Val&(1<<0)), _BOOL(reg8Val&(1<<1)), _BOOL(reg8Val&(1<<2)), _BOOL(reg8Val&(1<<3)), _BOOL(reg8Val&(1<<4)), _BOOL(reg8Val&(1<<5)));
+	_BOOL(reg8Val & (1 << 0)), _BOOL(reg8Val & (1 << 1)), _BOOL(reg8Val & (1 << 2)), _BOOL(reg8Val & (1 << 3)), _BOOL(reg8Val & (1 << 4)), _BOOL(reg8Val & (1 << 5)));
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
 	// Print If Dynamic Payload Feature Is Enabled
@@ -583,14 +575,6 @@ void printRadioSettings(void)
 	else sprintf(uartTxBuf, "EN_ACK_PAY:\r\n		Disabled \r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 
-
 	sprintf(uartTxBuf, "\r\n**********************************************\r\n");
 	HAL_UART_Transmit(&nrf24_huart, (uint8_t *)uartTxBuf, strlen(uartTxBuf), 10);
 }
-
-
-
-
-
-
-
