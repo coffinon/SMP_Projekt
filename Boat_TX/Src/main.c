@@ -101,16 +101,18 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc1, Joystick, 2);
-  NRF24_begin(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, hspi2);
-  nrf24_DebugUART_Init(huart2);
+  NRF24_init(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, &hspi2);
+  nrf24_DebugUART_Init(&huart2);
 
   printRadioSettings();
 
   NRF24_stopListening();
   NRF24_openWritingPipe(tx_pipe_addr);
 
-  lcd16x2_i2c_init(&hi2c1);
-  lcd16x2_i2c_clear();
+  if(! LCD1602A_init(&hi2c1)){
+	  uint8_t error_msg[] = "Couldn't connect to LCD Display\r\n";
+	  HAL_UART_Transmit(&huart2, error_msg, 33, 100);
+  }
   uint8_t i = 30;
   /* USER CODE END 2 */
 
@@ -124,11 +126,11 @@ int main(void)
 		  my_tx_data[PAYLOAD_SIZE] = '\r';
 		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';
 		  HAL_UART_Transmit(&huart2, my_tx_data, PAYLOAD_SIZE + 2, 100);
-		  lcd16x2_i2c_clear();
-		  lcd16x2_i2c_setCursor(0, 0);
-		  lcd16x2_i2c_printf("Speed = %d", my_tx_data[0]);
-		  lcd16x2_i2c_setCursor(1, 0);
-		  lcd16x2_i2c_printf("Direction = %d", my_tx_data[1]);
+		  LCD1602A_clear();
+		  LCD1602A_setCursor(0, 0);
+		  LCD1602A_printf("Speed = %d", my_tx_data[0]);
+		  LCD1602A_setCursor(1, 0);
+		  LCD1602A_printf("Direction = %d", my_tx_data[1]);
 	  }
 
 	  HAL_Delay(1000);

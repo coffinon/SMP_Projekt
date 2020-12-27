@@ -1,6 +1,6 @@
-KK_LCD1602A.c:20:13:lcd16x2_i2c_sendCommand	32	static
-KK_LCD1602A.c:34:13:lcd16x2_i2c_sendData	32	static
-KK_LCD1602A.c:50:9:lcd16x2_i2c_init	16	static
-KK_LCD1602A.c:101:6:lcd16x2_i2c_setCursor	24	static
-KK_LCD1602A.c:118:6:lcd16x2_i2c_clear	8	static
-KK_LCD1602A.c:125:6:lcd16x2_i2c_printf	48	static
+KK_LCD1602A.c:20:13:LCD1602A_sendCommand	32	static
+KK_LCD1602A.c:34:13:LCD1602A_sendData	32	static
+KK_LCD1602A.c:50:9:LCD1602A_init	16	static
+KK_LCD1602A.c:102:6:LCD1602A_setCursor	24	static
+KK_LCD1602A.c:119:6:LCD1602A_clear	8	static
+KK_LCD1602A.c:126:6:LCD1602A_printf	48	static

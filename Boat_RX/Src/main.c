@@ -92,8 +92,8 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  NRF24_begin(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, hspi2);
-  nrf24_DebugUART_Init(huart2);
+  NRF24_init(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, &hspi2);
+  nrf24_DebugUART_Init(&huart2);
 
   printRadioSettings();
 
