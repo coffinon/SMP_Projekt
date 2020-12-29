@@ -111,7 +111,7 @@ int main(void)
 
   if(! LCD1602A_init(&hi2c1)){
 	  uint8_t error_msg[] = "Couldn't connect to LCD Display\r\n";
-	  HAL_UART_Transmit(&huart2, error_msg, 33, 100);
+	  HAL_UART_Transmit(&huart2, error_msg, sizeof(error_msg), 100);
   }
   /* USER CODE END 2 */
 
@@ -119,8 +119,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  my_tx_data[0] = (uint8_t)(Joystick[0] * (100.0 / 4095.0));
-	  my_tx_data[1] = (uint8_t)(Joystick[1] * (100.0 / 4095.0));
+	  my_tx_data[0] = (uint8_t)((Joystick[0] * 100.0) / 4095.0);
+	  my_tx_data[1] = (uint8_t)((Joystick[1] * 100.0) / 4095.0);
 	  if(NRF24_write(my_tx_data, PAYLOAD_SIZE)){
 		  my_tx_data[PAYLOAD_SIZE] = '\r';
 		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';
@@ -132,7 +132,7 @@ int main(void)
 		  LCD1602A_printf("Direction = %u", my_tx_data[1]);
 	  }
 
-	  HAL_Delay(1000);
+	  HAL_Delay(350);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

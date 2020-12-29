@@ -37,6 +37,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define MAX_TIMEOUT 	1400
+#define IDLE_STATE		74
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -102,6 +104,8 @@ int main(void)
   NRF24_openReadingPipe(1, rx_pipe_addr);
   NRF24_startListening();
 
+  uint32_t watchdog = HAL_GetTick();
+  uint8_t error_msg[] = "Connection Lost\r\n";
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -114,6 +118,15 @@ int main(void)
 		  my_rx_data[PAYLOAD_SIZE] = '\r';
 		  my_rx_data[PAYLOAD_SIZE + 1] = '\n';
 		  HAL_UART_Transmit(&huart2, my_rx_data, PAYLOAD_SIZE + 2, 100);
+
+		  watchdog = HAL_GetTick();
+	  }
+	  else if((HAL_GetTick() - watchdog) > MAX_TIMEOUT ){
+		  my_rx_data[0] = IDLE_STATE;
+		  my_rx_data[1] = IDLE_STATE;
+		  HAL_UART_Transmit(&huart2, error_msg, sizeof(error_msg), 100);
+
+		  HAL_Delay(350);
 	  }
     /* USER CODE END WHILE */
 
