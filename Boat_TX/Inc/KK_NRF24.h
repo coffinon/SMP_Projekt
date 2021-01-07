@@ -5,7 +5,7 @@ Based on:					- NRF24L01 & NRF24L01+ Datasheet
 							- Arduino NRF24L01 Tutorial
 							- Mohamed Yaqoob's STM32 Tutorials
 First update:				23/12/2020
-Last update:				27/12/2020
+Last update:				07/01/2021
 */
 
 //List of header files
@@ -54,9 +54,5 @@ void NRF24_stopListening(void);
 /* DEFAULT INITIALIZATION */
 void NRF24_init(GPIO_TypeDef *nrf24PORT, uint16_t nrfCSN_Pin, uint16_t nrfCE_Pin, SPI_HandleTypeDef *nrfSPI);
 void nrf24_DebugUART_Init(UART_HandleTypeDef *nrf24Uart);
-
-
-/* PRINT SETTINGS FUNCTIONS */
-void printRadioSettings(void);
 
 #endif

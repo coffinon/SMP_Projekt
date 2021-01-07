@@ -97,9 +97,6 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   NRF24_init(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, &hspi2);
-  nrf24_DebugUART_Init(&huart2);
-
-  printRadioSettings();
 
   NRF24_openReadingPipe(1, rx_pipe_addr);
   NRF24_startListening();

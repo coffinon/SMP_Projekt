@@ -102,9 +102,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)Joystick, 2);
   NRF24_init(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, &hspi2);
-  nrf24_DebugUART_Init(&huart2);
-
-  printRadioSettings();
 
   NRF24_stopListening();
   NRF24_openWritingPipe(tx_pipe_addr);
