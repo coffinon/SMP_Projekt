@@ -19,3 +19,15 @@ Projekt składa się z dwóch urządzeń :
 - 2x mini silnik DC 3 - 9V
 - L4940V5 jako stabilizator LDO 5V dla zasilania wspomagany kondensatorami elektrolitycznymi 10uF low ESR na wejściu i wyjściu
 - Akumulator Litowo - Polimerowy 1600mAh o napięciu 7.4V
+
+# Postępy pracy
+
+**Na dzień 29.12.2020**
+- Komunikacja między dwoma płytkami - zrobione
+- Pobieranie danych z joysticków - zrobione
+- Przesyłanie danych do wyświetlacza LCD - zrobione
+- Układ zasilania dla obydwóch płytek - zrobione
+- Sterowanie silnikami - na razie zainicjalizowane PWM'y i czekamy na nowe silniki, bo stare okazały się być zbyt słabe
+- Skonstruowanie kadłuba łódki - nie zrobione
+- Wodowanie i testy - nie zrobione
+- Nagranie filmiku - nie zrobione
