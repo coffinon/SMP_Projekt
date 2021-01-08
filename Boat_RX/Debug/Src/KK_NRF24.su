@@ -12,8 +12,8 @@ KK_NRF24.c:184:9:NRF24_write	32	static
 KK_NRF24.c:242:9:NRF24_read	24	static
 KK_NRF24.c:263:6:NRF24_openWritingPipe	16	static
 KK_NRF24.c:272:6:NRF24_openReadingPipe	32	static
-KK_NRF24.c:298:6:NRF24_startListening	16	static
-KK_NRF24.c:317:6:NRF24_stopListening	8	static
-KK_NRF24.c:329:6:NRF24_init	32	static
-KK_NRF24.c:413:13:NRF24_flush_TX	8	static
-KK_NRF24.c:419:13:NRF24_flush_RX	8	static
+KK_NRF24.c:297:6:NRF24_startListening	16	static
+KK_NRF24.c:316:6:NRF24_stopListening	8	static
+KK_NRF24.c:328:6:NRF24_init	32	static
+KK_NRF24.c:412:13:NRF24_flush_TX	8	static
+KK_NRF24.c:418:13:NRF24_flush_RX	8	static

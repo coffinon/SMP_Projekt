@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "KK_NRF24.h"
+#include "NRF24.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,7 +96,7 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  NRF24_init(GPIOC, NRF24_CSN_Pin, NRF24_CE_Pin, &hspi2);
+  NRF24_init(&hspi2);
 
   NRF24_openReadingPipe(1, rx_pipe_addr);
   NRF24_startListening();

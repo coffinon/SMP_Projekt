@@ -20,7 +20,7 @@
 "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o"
 "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o"
 "Src/KK_LCD1602A.o"
-"Src/KK_NRF24.o"
+"Src/NRF24.o"
 "Src/adc.o"
 "Src/dma.o"
 "Src/gpio.o"

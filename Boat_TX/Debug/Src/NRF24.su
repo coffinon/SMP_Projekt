@@ -1,0 +1,16 @@
+NRF24.c:41:6:NRF24_init	24	static
+NRF24.c:111:13:NRF24_CSN	16	static
+NRF24.c:120:13:NRF24_CE	16	static
+NRF24.c:129:13:NRF24_write_register	24	static
+NRF24.c:144:13:NRF24_write_registerN	24	static
+NRF24.c:159:16:NRF24_read_register	24	static
+NRF24.c:178:13:NRF24_resetStatus	8	static
+NRF24.c:184:13:NRF24_flush_TX	8	static
+NRF24.c:190:13:NRF24_flush_RX	8	static
+NRF24.c:196:13:NRF24_power	16	static
+NRF24.c:205:6:NRF24_openWritingPipe	16	static
+NRF24.c:215:6:NRF24_openReadingPipe	40	static
+NRF24.c:252:9:NRF24_write	24	static
+NRF24.c:287:9:NRF24_read	24	static
+NRF24.c:306:6:NRF24_startListening	8	static
+NRF24.c:323:9:NRF24_available	16	static

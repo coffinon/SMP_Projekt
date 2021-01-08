@@ -31,7 +31,7 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h ../Inc/adc.h \
  ../Inc/main.h ../Inc/dma.h ../Inc/i2c.h ../Inc/spi.h ../Inc/usart.h \
- ../Inc/gpio.h ../Inc/KK_NRF24.h ../Inc/nRF24L01.h ../Inc/KK_LCD1602A.h
+ ../Inc/gpio.h ../Inc/NRF24.h ../Inc/KK_LCD1602A.h
 
 ../Inc/main.h:
 
@@ -111,8 +111,6 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
 
 ../Inc/gpio.h:
 
-../Inc/KK_NRF24.h:
-
-../Inc/nRF24L01.h:
+../Inc/NRF24.h:
 
 ../Inc/KK_LCD1602A.h:
