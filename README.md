@@ -22,12 +22,12 @@ Projekt składa się z dwóch urządzeń :
 
 # Postępy pracy
 
-**Na dzień 29.12.2020**
+**Na dzień 08.01.2021**
 - Komunikacja między dwoma płytkami - zrobione
 - Pobieranie danych z joysticków - zrobione
 - Przesyłanie danych do wyświetlacza LCD - zrobione
 - Układ zasilania dla obydwóch płytek - zrobione
-- Sterowanie silnikami - na razie zainicjalizowane PWM'y i czekamy na nowe silniki, bo stare okazały się być zbyt słabe
-- Skonstruowanie kadłuba łódki - nie zrobione
+- Sterowanie silnikami - zrobione
+- Skonstruowanie kadłuba łódki - w trakcie
 - Wodowanie i testy - nie zrobione
 - Nagranie filmiku - nie zrobione
