@@ -23,7 +23,7 @@ Projekt składa się z dwóch urządzeń :
 # Postępy pracy
 
 **Na dzień 11.01.2021**
-- Komunikacja między dwoma płytkami                - zrobione
+- Komunikacja między dwoma płytkami                \t- zrobione
 - Pobieranie danych z joysticków                   - zrobione
 - Przesyłanie danych do wyświetlacza LCD           - zrobione
 - Układ zasilania dla obydwóch płytek              - zrobione
