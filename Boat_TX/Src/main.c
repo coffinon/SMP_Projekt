@@ -115,12 +115,17 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // mnozymy przez wspolczynnik zepsutych Chinskich joysticków
 	  my_tx_data[0] = (uint8_t)((Joystick[0] * 100.0) / 4095.0);
+	  my_tx_data[0] = (uint8_t)((my_tx_data[0] - 43) * (100.0 / 57.0));
 	  my_tx_data[1] = (uint8_t)((Joystick[1] * 100.0) / 4095.0);
+	  my_tx_data[1] = (uint8_t)((my_tx_data[1] - 43) * (100.0 / 57.0));
+
 	  if(NRF24_write(my_tx_data, PAYLOAD_SIZE)){
 		  my_tx_data[PAYLOAD_SIZE] = '\r';
 		  my_tx_data[PAYLOAD_SIZE + 1] = '\n';
 		  HAL_UART_Transmit(&huart2, my_tx_data, PAYLOAD_SIZE + 2, 100);
+
 		  LCD1602A_clear();
 		  LCD1602A_setCursor(0, 0);
 		  LCD1602A_printf("Speed = %u", my_tx_data[0]);
@@ -128,7 +133,7 @@ int main(void)
 		  LCD1602A_printf("Direction = %u", my_tx_data[1]);
 	  }
 
-	  HAL_Delay(350);
+	  HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -37,8 +37,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MAX_TIMEOUT 	1400
-#define IDLE_STATE		74
+#define IDLE_STATE 50
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,8 +48,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-const uint64_t rx_pipe_addr = 		0x11223344AA;
-uint8_t my_rx_data[MAX_PAYLOAD_SIZE + 2];
+static const uint64_t rx_pipe_addr = 0x11223344AA;
+static uint8_t my_rx_data[MAX_PAYLOAD_SIZE + 2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,11 +97,21 @@ int main(void)
   /* USER CODE BEGIN 2 */
   NRF24_init(&hspi2);
 
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
+
+  TIM1->CCR1 = 0;
+  TIM1->CCR2 = 0;
+
   NRF24_openReadingPipe(1, rx_pipe_addr);
   NRF24_startListening();
 
   uint32_t watchdog = HAL_GetTick();
   uint8_t error_msg[] = "Connection Lost\r\n";
+  const uint32_t timeout = 1400;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,14 +125,82 @@ int main(void)
 		  my_rx_data[PAYLOAD_SIZE + 1] = '\n';
 		  HAL_UART_Transmit(&huart2, my_rx_data, PAYLOAD_SIZE + 2, 100);
 
+		  if((my_rx_data[0] >= 40) && (my_rx_data[0] <= 60)){
+		  		// IDLE STATE - STOP
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
+		  		TIM1->CCR1 = 0;
+		  		TIM1->CCR2 = 0;
+		  	}
+		  	else if((my_rx_data[0] >= 0) && (my_rx_data[0] < 40)){
+		  		// SAIL BACKWARD
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+		  		if((my_rx_data[1] >= 40) && (my_rx_data[1] <= 60)){
+		  			// SAIL STRAIGHT
+		  			TIM1->CCR1 = my_rx_data[0];
+		  			TIM1->CCR2 = my_rx_data[0];
+		  		}
+		  		else if((my_rx_data[1] >= 0) && (my_rx_data[1] < 20)){
+		  			// SAIL FULL LEFT
+		  			TIM1->CCR1 = my_rx_data[0];
+		  			TIM1->CCR2 = 0;
+		  		}
+		  		else if((my_rx_data[1] >= 20) && (my_rx_data[1] < 40)){
+		  			// SAIL HALF LEFT
+		  			TIM1->CCR1 = my_rx_data[0];
+		  			TIM1->CCR2 = (uint8_t)(my_rx_data[0] / 2.0);
+		  		}
+		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  			// SAIL FULL RIGHT
+		  			TIM1->CCR1 = 0;
+		  			TIM1->CCR2 = my_rx_data[0];
+		  		}
+		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  			// SAIL HALF RIGHT
+		  			TIM1->CCR1 = (uint8_t)(my_rx_data[0] / 2.0);
+		  			TIM1->CCR2 = my_rx_data[0];
+		  		}
+		  	}
+		  	else if((my_rx_data[0] > 60) && (my_rx_data[0] <= 100)){
+		  		// SAIL FORWARD
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+		  		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
+		  		if((my_rx_data[1] >= 40) && (my_rx_data[1] <= 60)){
+		  			// SAIL STRAIGHT
+		  			TIM1->CCR1 = my_rx_data[0];
+		  			TIM1->CCR2 = my_rx_data[0];
+		  		}
+		  		else if((my_rx_data[1] >= 0) && (my_rx_data[1] < 20)){
+		  			// SAIL FULL LEFT
+		  			TIM1->CCR1 = 0;
+		  			TIM1->CCR2 = my_rx_data[0];
+		  		}
+		  		else if((my_rx_data[1] >= 20) && (my_rx_data[1] < 40)){
+		  			// SAIL HALF LEFT
+		  			TIM1->CCR1 = (uint8_t)(my_rx_data[0] / 2.0);
+		  			TIM1->CCR2 = my_rx_data[0];
+		  		}
+		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  			// SAIL FULL RIGHT
+		  			TIM1->CCR1 = my_rx_data[0];
+		  			TIM1->CCR2 = 0;
+		  		}
+		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  			// SAIL HALF RIGHT
+		  			TIM1->CCR1 = my_rx_data[0];
+		  			TIM1->CCR2 = (uint8_t)(my_rx_data[0] / 2.0);
+		  		}
+		  	}
+
 		  watchdog = HAL_GetTick();
 	  }
-	  else if((HAL_GetTick() - watchdog) > MAX_TIMEOUT ){
+	  else if((HAL_GetTick() - watchdog) > timeout ){
 		  my_rx_data[0] = IDLE_STATE;
 		  my_rx_data[1] = IDLE_STATE;
 		  HAL_UART_Transmit(&huart2, error_msg, sizeof(error_msg), 100);
 
-		  HAL_Delay(350);
+		  HAL_Delay(100);
 	  }
     /* USER CODE END WHILE */
 
