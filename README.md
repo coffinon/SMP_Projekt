@@ -29,5 +29,8 @@ Projekt składa się z dwóch urządzeń :
 - Układ zasilania dla obydwóch płytek - zrobione
 - Sterowanie silnikami - zrobione
 - Skonstruowanie kadłuba łódki - zrobione
-- Wodowanie i testy - w trakcie
-- Nagranie filmiku - nie zrobione
+- Wodowanie i testy - zrobione
+- Nagranie filmiku - zrobione
+
+**Link do filmiku w serwisie Youtube**
+https://www.youtube.com/watch?v=K5Uee5F6XK4
