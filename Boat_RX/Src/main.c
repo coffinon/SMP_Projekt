@@ -156,7 +156,7 @@ int main(void)
 		  			TIM1->CCR1 = 0;
 		  			TIM1->CCR2 = my_rx_data[0];
 		  		}
-		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  		else if((my_rx_data[1] > 60) && (my_rx_data[1] <= 80)){
 		  			// SAIL HALF RIGHT
 		  			TIM1->CCR1 = (uint8_t)(my_rx_data[0] / 2.0);
 		  			TIM1->CCR2 = my_rx_data[0];
@@ -186,7 +186,7 @@ int main(void)
 		  			TIM1->CCR1 = my_rx_data[0];
 		  			TIM1->CCR2 = 0;
 		  		}
-		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  		else if((my_rx_data[1] > 60) && (my_rx_data[1] <= 80)){
 		  			// SAIL HALF RIGHT
 		  			TIM1->CCR1 = my_rx_data[0];
 		  			TIM1->CCR2 = (uint8_t)(my_rx_data[0] / 2.0);

@@ -10077,14 +10077,14 @@ int main(void)
  8004486:	639a      	str	r2, [r3, #56]	; 0x38
  8004488:	e0b9      	b.n	80045fe <main+0x30e>
 		  		}
-		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  		else if((my_rx_data[1] > 60) && (my_rx_data[1] <= 80)){
  800448a:	4b4a      	ldr	r3, [pc, #296]	; (80045b4 <main+0x2c4>)
  800448c:	785b      	ldrb	r3, [r3, #1]
- 800448e:	2b50      	cmp	r3, #80	; 0x50
+ 800448e:	2b3c      	cmp	r3, #60	; 0x3c
  8004490:	f240 80b5 	bls.w	80045fe <main+0x30e>
  8004494:	4b47      	ldr	r3, [pc, #284]	; (80045b4 <main+0x2c4>)
  8004496:	785b      	ldrb	r3, [r3, #1]
- 8004498:	2b64      	cmp	r3, #100	; 0x64
+ 8004498:	2b50      	cmp	r3, #80	; 0x50
  800449a:	f200 80b0 	bhi.w	80045fe <main+0x30e>
 		  			// SAIL HALF RIGHT
 		  			TIM1->CCR1 = (uint8_t)(my_rx_data[0] / 2.0);
@@ -10235,14 +10235,14 @@ int main(void)
  80045b4:	2000002c 	.word	0x2000002c
  80045b8:	200000ec 	.word	0x200000ec
 		  		}
-		  		else if((my_rx_data[1] > 80) && (my_rx_data[1] <= 100)){
+		  		else if((my_rx_data[1] > 60) && (my_rx_data[1] <= 80)){
  80045bc:	4b1e      	ldr	r3, [pc, #120]	; (8004638 <main+0x348>)
  80045be:	785b      	ldrb	r3, [r3, #1]
- 80045c0:	2b50      	cmp	r3, #80	; 0x50
+ 80045c0:	2b3c      	cmp	r3, #60	; 0x3c
  80045c2:	d91c      	bls.n	80045fe <main+0x30e>
  80045c4:	4b1c      	ldr	r3, [pc, #112]	; (8004638 <main+0x348>)
  80045c6:	785b      	ldrb	r3, [r3, #1]
- 80045c8:	2b64      	cmp	r3, #100	; 0x64
+ 80045c8:	2b50      	cmp	r3, #80	; 0x50
  80045ca:	d818      	bhi.n	80045fe <main+0x30e>
 		  			// SAIL HALF RIGHT
 		  			TIM1->CCR1 = my_rx_data[0];
